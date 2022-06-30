@@ -111,10 +111,10 @@
 			pos_loadData("1", callback);
 		}
 
-		function addPayment(amount) {
+		function addPayment(amount, method) {
 			const callback = function (response) {}
 			amount = amount * 100;
-			pos_addPayment(amount, "CASH", callback);
+			pos_addPayment(amount, method, callback);
 		}
 
 		function payAccount(method) {
@@ -228,7 +228,7 @@
 				<div class="form-inline col-6">
 					<input type="number" class="form-control form-control-lg col-6" id="amount" name="amount">
 					<input type="button" class="btn btn-outline-primary btn-lg" name="button" value="Pay"
-						onclick="addPayment(document.getElementById('amount').value)" />
+						onclick="addPayment(document.getElementById('amount').value, $('#pay_method .active')[0].dataset.pay)" />
 				</div>
 			</form>
 		</div>
