@@ -130,17 +130,22 @@
 		};
 
 		function getCurrentAccount() {
+			/**/console.log('load');
 			const setaccount = function (response){
+				/**/console.log('success');
 				window.currentAccount = response.data;
 				document.getElementById('amount').placeholder = response.data.totalAmount;
 			}
 			try {
 				pos_getCurrentAccount(setaccount);
 			} catch (error) {
+				/**/console.log(error, document.getElementById('log_dump'));
 				document.getElementById('log_dump').innerHTML = error;
 			}
-		}getCurrentAccount();
-
+		}
+		document.addEventListener('DOMContentLoaded', ()=>{
+			getCurrentAccount();
+		}, false);
 
 		function getCurrentAccount2() {
 			const printResult = function (response) {
@@ -206,7 +211,7 @@
 <!-- choose payment method -->
 		<div class="container newline text-left">
 			<div class="dropdown">
-				<button id="pay_method_button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+				<button id="pay_method_button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false">Choose a paymet method</button>
 				<div id="pay_method" class="dropdown-menu" aria-labelledby="pay_method">
 					<a class="dropdown-item active" data-pay="CASH"
@@ -223,14 +228,16 @@
 		</div>
 		<!-- pay for account -->
 		<div class="container newline text-left">
-			<button type="button" class="btn btn-outline-primary btn-lg col-6" onclick="payAccount($('#pay_method .active')[0].dataset.pay)">Pay in Full</button>
-			<form name="form" action="" METHOD="GET" class="col-6">
-				<div class="form-inline col-6">
-					<input type="number" class="form-control form-control-lg col-6" id="amount" name="amount">
-					<input type="button" class="btn btn-outline-primary btn-lg" name="button" value="Pay"
-						onclick="addPayment(document.getElementById('amount').value, $('#pay_method .active')[0].dataset.pay)" />
-				</div>
-			</form>
+			<div class="row">
+				<button type="button" class="btn btn-outline-primary btn-lg col-4" onclick="payAccount($('#pay_method .active')[0].dataset.pay)">Pay in Full</button>
+				<form name="form" action="" METHOD="GET" class="col-4">
+					<div class="form-inline">
+						<input type="number" class="form-control form-control-lg" id="amount" name="amount">
+						<input type="button" class="btn btn-outline-primary btn-lg" name="button" value="Pay"
+							onclick="addPayment(document.getElementById('amount').value, $('#pay_method .active')[0].dataset.pay)" />
+					</div>
+				</form>
+			</div>
 		</div>
 		<div class="container newline text-left">
 			<form name="form4" action="" METHOD="GET">
@@ -271,7 +278,7 @@
 				</div>
 			</form>
 		</div>
-		<div id="log_dump" class="container" ></div>
+		<div id="log_dump" class="row" ></div><button type="button" class="btn btn-lg btn-ls" onclick="hideContent('log_dump')">Clear</button>
 	</div>
 </body>
 </html>
