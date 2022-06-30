@@ -27,6 +27,10 @@
 			}
 		}
 
+		.newline{
+			padding: 10px 0;
+		}
+
 		.btn-outline-primary {
 			background-color: #2E61DE !important;
 			color: #FFFFFF !important;
@@ -119,14 +123,31 @@
 			const callback = function (response) {
 				pos_close();
 			}
-			pos_payAccount(method, callback)
+			pos_payAccount(method, callback);
 		}
 
+		function printResult() {
+			document.getElementById("account").innerHTML = JSON.stringify(window.currentAccount, null, 2) //syntaxHighlight(response.data)
+		};
+
 		function getCurrentAccount() {
+			const setaccount = function (response){
+				window.currentAccount = response.data;
+				document.getElementById('amount').placeholder = response.data.totalAmount;
+			}
+			try {
+				pos_getCurrentAccount(setaccount);
+			} catch (error) {
+				document.getElementById('log_dump').innerHTML = error;
+			}
+		}getCurrentAccount();
+
+
+		function getCurrentAccount2() {
 			const printResult = function (response) {
 				document.getElementById("account").innerHTML = JSON.stringify(response.data, null, 2) //syntaxHighlight(response.data)
 			};
-			pos_getCurrentAccount(printResult)
+			pos_getCurrentAccount2(printResult);
 		}
 
 		function setConsumer(firstName, lastName, identifier) {
@@ -142,7 +163,6 @@
 				try {
 					pos_addSpecialItemToCurrentAccount('357745005953494', -200, 'Discount');
 				} catch (error) {
-					window.alert(error)
 					document.getElementById('log_dump').innerHTML = error;
 				}
 			} else {
@@ -160,29 +180,32 @@
 	<div class="p-5">
 		<div id="content2"></div>
 		<div id="content3"></div>
-		<div class="container text-center">
+		<div class="container newline text-center">
 			<img src="https://euc1-web.posios.com/management/en-US/assets/img/logos/lightspeed-vertical.png"
 				width="200px" />
 			<h1>LSK Web Extensions Demo</h1>
 		</div>
 		<hr>
-		<div class="container text-left">
+<!-- POS context -->
+		<div class="container newline text-left">
 			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="printContext()">Show POS
 				Context</button>
 			<button type="button" class="btn btn-lg btn-ls" onclick="hideContent('request')">Hide Context</button>
-			<div class="container text-left"></div>
-			<pre id="request"></pre>
+			<div id="request"></div>
 		</div>
-		<div class="container text-left">
-			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="getCurrentAccount()">Get Current Account</button>
+<!-- current acount context -->
+		<div class="container newline text-left">
+			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="printResult()">Get Current Account</button>
 			<button type="button" class="btn btn-lg btn-ls" onclick="hideContent('account')">Clear</button>
-			<pre id="account"></pre>
+			<div id="account"></div>
 		</div>
-		<div class="container text-left">
+<!-- add loyalty -->
+		<div class="container newline text-left">
 			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="Panostest('pos')">add item</button>
 			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="Panostest('neg')">add neg item</button>
 		</div>
-		<div class="container text-left">
+<!-- choose payment method -->
+		<div class="container newline text-left">
 			<div class="dropdown">
 				<button id="pay_method_button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
 					aria-haspopup="true" aria-expanded="false">Choose a paymet method</button>
@@ -198,9 +221,19 @@
 						href="#">API</a>
 				</div>
 			</div>
-			<button type="button" class="btn btn-outline-primary btn-lg" onclick="payAccount($('#pay_method .active')[0].dataset.pay)">Pay in Full</button>
 		</div>
-		<div class="container text-left">
+		<!-- pay for account -->
+		<div class="container newline text-left">
+			<button type="button" class="btn btn-outline-primary btn-lg col-6" onclick="payAccount($('#pay_method .active')[0].dataset.pay)">Pay in Full</button>
+			<form name="form" action="" METHOD="GET" class="col-6">
+				<div class="form-inline col-6">
+					<input type="number" class="form-control form-control-lg col-6" id="amount" name="amount">
+					<input type="button" class="btn btn-outline-primary btn-lg" name="button" value="Pay"
+						onclick="addPayment(document.getElementById('amount').value)" />
+				</div>
+			</form>
+		</div>
+		<div class="container newline text-left">
 			<form name="form4" action="" METHOD="GET">
 				<div class="form-inline">
 					<input type="number" class="form-control form-control-lg" id="textinput" name="textinput">
@@ -209,16 +242,9 @@
 				</div>
 			</form>
 		</div>
-		<div class="container text-left">
-			<form name="form" action="" METHOD="GET">
-				<div class="form-inline">
-					<input type="number" class="form-control form-control-lg" id="amount" name="amount">
-					<input type="button" class="btn btn-outline-primary btn-lg" name="button" value="Pay"
-						onclick="addPayment(document.getElementById('amount').value)" />
-				</div>
-			</form>
+		<div class="container newline text-left">
 		</div>
-		<div class="container text-left">
+		<div class="container newline text-left">
 			<form name="form2" action="" METHOD="GET">
 				<div class="form-inline">
 					<input type="text" class="form-control form-control-lg" id="data" name="data">
@@ -227,7 +253,7 @@
 				</div>
 			</form>
 		</div>
-		<div class="container text-left">
+		<div class="container newline text-left">
 			<form name="form3" action="" METHOD="GET">
 				<div class="form-inline">
 					<input type="text" class="form-control form-control-lg" id="dataview" name="dataview" readonly>
@@ -236,15 +262,17 @@
 				</div>
 			</form>
 		</div>
-		<form name="form5" action="" method="GET" form_signature="10037543804237589188">
-			<div class="form-inline">
-				<input type="text" class="form-control form-control-lg" id="firstName" name="First Name" placeholder="First Name" field_signature="3734076707" form_signature="10037543804237589188">
-				<input type="text" class="form-control form-control-lg" id="lastName" name="Last Name" placeholder="Last Name" field_signature="2798334747" form_signature="10037543804237589188">
-				<input type="text" class="form-control form-control-lg" id="identifier" name="Identifier" placeholder="Identifier" field_signature="3743438200" form_signature="10037543804237589188">
-				<input type="button" class="btn btn-outline-primary btn-lg" name="button" value="Set Consumer Data" onclick="setConsumer(document.getElementById('firstName').value,document.getElementById('lastName').value,document.getElementById('identifier').value)">
-			</div>
-		</form>
-		<div id="log_dump"></div>
+		<div class="container newline text-left">
+			<form name="form5" action="" method="GET" form_signature="10037543804237589188">
+				<div class="form-inline">
+					<input type="text" class="form-control form-control-lg" id="firstName" name="First Name" placeholder="First Name" field_signature="3734076707" form_signature="10037543804237589188">
+					<input type="text" class="form-control form-control-lg" id="lastName" name="Last Name" placeholder="Last Name" field_signature="2798334747" form_signature="10037543804237589188">
+					<input type="text" class="form-control form-control-lg" id="identifier" name="Identifier" placeholder="Identifier" field_signature="3743438200" form_signature="10037543804237589188">
+					<input type="button" class="btn btn-outline-primary btn-lg" name="button" value="Set Consumer Data" onclick="setConsumer(document.getElementById('firstName').value,document.getElementById('lastName').value,document.getElementById('identifier').value)">
+				</div>
+			</form>
+		</div>
+		<div id="log_dump" class="container" ></div>
 	</div>
 </body>
 
