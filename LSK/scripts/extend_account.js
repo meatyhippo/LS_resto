@@ -11,9 +11,9 @@ fetch("https://manager.trial.lsk.lightspeed.app/admin/setExpirationDate", {
     "sec-gpc": "1",
     "upgrade-insecure-requests": "1"
   },
-  "referrer": "https://manager.trial.lsk.lightspeed.app/admin/businessLocationDetails?blId=935950683209730",
+  "referrer": "https://manager.trial.lsk.lightspeed.app/admin/businessLocationDetails?blId=183455233081346",
   "referrerPolicy": "strict-origin-when-cross-origin",
-  "body": "blId=935950683209730&expirationDate=date.struct&expirationDate_day=20&expirationDate_month=2&expirationDate_year=2028",
+  "body": "blId=183455233081346&expirationDate=date.struct&expirationDate_day=20&expirationDate_month=2&expirationDate_year=2030",
   "method": "POST",
   "mode": "cors",
   "credentials": "include"

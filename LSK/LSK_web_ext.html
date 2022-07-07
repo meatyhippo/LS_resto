@@ -126,7 +126,19 @@
 		}
 
 		function printResult() {
-			document.getElementById("account").innerHTML = JSON.stringify(window.currentAccount, null, 2) //syntaxHighlight(response.data)
+			document.getElementById("account").innerHTML = JSON.stringify(currentAccount, null, 2) //syntaxHighlight(response.data)
+			document.getElementById("account").innerHTML =
+				"<p>Business ID: " +  + "</p>" +
+				"<p>Business Name: " + posContext.businessName + "</p>" +
+				"<p>Location ID: " + posContext.locationId + "</p>" +
+				"<p>Location Name: " + posContext.locationName + "</p>" +
+				"<p>Configuration: " + posContext.configurationName + "</p>" +
+				"<p>Device Name: " + posContext.deviceName + "</p>" +
+				"<p>Device ID: " + posContext.deviceId + "</p>" +
+				"<p>User Name: " + posContext.userName + "</p>" +
+				"<p>User ID: " + posContext.userId + "</p>" +	
+				"<p>App Version: " + printVersion() + "</p>"
+
 		};
 
 		function getCurrentAccount() {
@@ -206,8 +218,23 @@
 		</div>
 <!-- add loyalty -->
 		<div class="container newline text-left">
-			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="Panostest('pos')">add item</button>
-			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="Panostest('neg')">add neg item</button>
+			<div class="row">
+				<a href="/LSK/loyalty/loyalty.html" class="col-2">
+					<button type="button" class="btn btn-outline-primary btn-lg btn-ls">Loyalty</button>
+				</a>
+				<a href="/LSK/reservation/reservations.php" class="col-2">
+					<button type="button" class="btn btn-outline-primary btn-lg btn-ls">Reservations</button>
+				</a>
+			</div>
+			<div class="newline"></div>
+			<div class="row">
+				<div class="col-2">
+					<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="Panostest('pos')">add item</button>
+				</div>
+				<div class="col-2">
+					<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="Panostest('neg')">add neg item</button>
+				</div>
+			</div>
 		</div>
 <!-- choose payment method -->
 		<div class="container newline text-left">
@@ -238,7 +265,7 @@
 						<div class="form-inline row">
 							<input type="number" class="form-control form-control-lg col-6" id="amount" name="amount">
 							<input type="button" class="btn btn-outline-primary btn-lg col-6" name="button" value="Pay"
-								onclick="addPayment(document.getElementById('amount').value, $('#pay_method .active')[0].dataset.pay)" />
+								onclick="addPayment(document.getElementById('amount').value, $('#pay_method .active')[0].dataset.pay)"/>
 						</div>
 					</form>
 				</div>
@@ -250,7 +277,7 @@
 				<div class="form-inline">
 					<input type="number" class="form-control form-control-lg" id="textinput" name="textinput">
 					<input type="button" class="btn btn-outline-primary btn-lg" name="button" value="Print Text"
-						onclick="printMessage(document.getElementById('textinput').value)" />
+						onclick="printMessage(document.getElementById('textinput').value)"/>
 				</div>
 			</form>
 		</div>
