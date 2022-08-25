@@ -1,0 +1,1355 @@
+//TODO fetch to create item
+//TODO fetch to create accounting group
+//TODO fetch to create payment method with "Other payment method"
+//TODO add if length to deliverymodes for Storekit
+//TODO add note to mention what still needs to be done: add items to main screen Deliverect, Link with delivery VAT?
+//TODO find if statement for empty items
+//TODO add unpaid order payment method {"name":"unpaid order", "code":"UNPPM"}
+
+window.accountprofiles = {
+	"dinein": {
+		"name":"API account profile3",
+		"code":"AAP3",
+		"deliveryMode":"NONE",
+		"deliveryDelay=NOTUSED&":"",
+		"minDeliveryDelay=-1&":"",
+		"completionMode=IMMEDIATE&":"",
+		"_consumerRequired=&":"",
+		"_deliverySlipOnReceipt=&":"",
+		"_printNoteOnCreation=&":"",
+		"_forceNoPrintOnlineOrders=&":"",
+		"_playSoundOnOnlineOrders=&":"",
+		"modes":{
+			"off": "NONE",
+			"pickup": "COLLECTION",
+			"delivery":"REMOTE"
+
+		},
+		"completionModes":{
+			"when_pay_received": "IMMEDIATE",
+			"when_ready_delivery": "ON_DELIVERY"
+		}
+	},
+	"deliverect_profiles":[
+		{ // Generic AAP
+			"Generic": {
+				"names":["API account profile"],
+				"codes":["AAP"],
+				"deliveryMode":"NONE",
+				"completionMode":"IMMEDIATE",
+				"items":{}
+			}
+		},{
+			"Deliveroo": {
+				"accountnames": ["Deliveroo", "Deliveroo - Pickup", "Deliveroo - Eat in"],
+				"accountcodes": ["DVAP", "DVAPP", "DVAPEI"],
+				"deliveryMode": "COLLECTION",
+				"completionMode":"IMMEDIATE",
+				"payment_methods":[{
+					"name": "Deliveroo",
+					"code": "DVPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Deliveroo service charge",
+						"SKU": "DELD66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Deliveroo Delivery Fee",
+						"SKU": "DELD77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {
+						"name": "Deliveroo Minimum Fee",
+						"SKU": "DELD88",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"discount": {
+						"name": "Deliveroo Discount",
+						"SKU": "DELD99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"UEAT": {
+				"accountnames": ["UberEats", "UberEats - Pickup", "UberEats - Eat in"],
+				"accountcodes": ["UEAP", "UEAPP", "UEAPEI"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "UberEats",
+					"code": "UEPM"
+				}],
+				"items": {
+					"service": {
+						"name": "UberEats Service Charge",
+						"SKU": "UE66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "UberEats Delivery Fee",
+						"SKU": "UE77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "UberEats Discount Fee",
+						"SKU": "UE99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"DoorDash": {
+				"accountnames": ["DoorDash", "DoorDash - Pickup", "DoorDash - Eat in"],
+				"accountcodes": ["DDAP", "DDAPP", "DDAPEI"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "DoorDash",
+					"code": "DDPM"
+				}],
+				"items": {
+					"service": {
+						"name": "DoorDash Service Charge",
+						"SKU": "DD66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "DoorDash Delivery Fee",
+						"SKU": "DD77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "DoorDash Discount Fee",
+						"SKU": "DD99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"SkipTheDishes": {
+				"accountnames": ["SkipTheDishes", "SkipTheDishes - Pickup", "SkipTheDishes - Eat in"],
+				"accountcodes": ["SKAP", "SKAPP", "SKAPEI"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "SkipTheDishes",
+					"code": "SKPM"
+				}],
+				"items": {
+					"service": {
+						"name": "SkipTheDishes Service Charge",
+						"SKU": "SK66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "SkipTheDishes Delivery Fee",
+						"SKU": "SK77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "SkipTheDishes Discount Fee",
+						"SKU": "SK99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Glovo": {
+				"accountnames": ["Glovo"],
+				"accountcodes": ["GVAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Glovo",
+					"code": "GVPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Glovo Service Charge",
+						"SKU": "GL66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Glovo Delivery Fee",
+						"SKU": "GL77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Glovo Discount",
+						"SKU": "GL99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Just Eat": {
+				"accountnames": ["Just Eat", "Just Eat - Pickup", "Just Eat - Eat in"],
+				"accountcodes": ["JEAP", "JEAPP", "JEAPEI"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Just Eat",
+					"code": "JEPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Just Eat Service Charge",
+						"SKU": "JE66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Just Eat Delivery Fee",
+						"SKU": "JE77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Just Eat Discount",
+						"SKU": "JE99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Deliverect - c&c": {
+				"accountnames": ["Deliverect - c&c", "c&c - Pickup", "c&c - Eat in"],
+				"accountcodes": ["DCCAP", "DCCAPP", "DCCAPEI"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Deliverect - c&c",
+					"code": "DCCPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Online order Service Charge",
+						"SKU": "OO66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Online order Delivery Fee",
+						"SKU": "OO77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Online order Discount",
+						"SKU": "OO99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Online Order": {
+				"accountnames": ["Online Order - Delivery", "Online Order - Takeaway"],
+				"accountcodes": ["OODAP", "OOTAAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Online Order - Paid",
+					"code": "OOPPM"
+				},{
+					"name": "Online Order - Not Paid",
+					"code": "OONPPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Online order Service Charge",
+						"SKU": "OO66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Online order Delivery Fee",
+						"SKU": "OO77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Online order Discount",
+						"SKU": "OO99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Takeaway.com - Delivery": {
+				"accountnames": ["Takeaway.com - Delivery", "Takeaway.com - Pickup", "Takeaway.com - Takeaway"],
+				"accountcodes": ["TADAP", "TADAPP", "TATAAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Takeaway.com - Paid",
+					"code": "TAPPM"
+				},{
+					"name": "Takeaway.com - Not Paid",
+					"code": "TANPPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Takeaway.com Service Charge",
+						"SKU": "TA66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Takeaway.com Delivery Fee",
+						"SKU": "TA77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Takeaway.com Discount",
+						"SKU": "TA99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Smood": {
+				"accountnames": ["Smood", "Smood - Pickup", "Smood - Eat in"],
+				"accountcodes": ["SMAP", "SMAPP", "SMAPEI"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Smood",
+					"code": "SMPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Smood Service Charge",
+						"SKU": "SM66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Smood Delivery Fee",
+						"SKU": "SM77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Smood Discount",
+						"SKU": "SM99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Generic Orders": {
+				"accountnames": ["Generic Orders"],
+				"accountcodes": ["GOAP"],
+				"deliveryMode":"NONE",
+				"completionMode":"IMMEDIATE",
+				"payment_methods":[{
+					"name": "Generic",
+					"code": "GCPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Generic Orders Service Charge",
+						"SKU": "GO66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Generic Orders Delivery Fee",
+						"SKU": "GO77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Generic channel Discount",
+						"SKU": "GO99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"5LOYALTY": {
+				"accountnames": ["5LOYALTY"],
+				"accountcodes": ["GOAP"],
+				"deliveryMode":"NONE",
+				"completionMode":"IMMEDIATE",
+				"payment_methods":[{
+					"name": "5LOYALTY",
+					"code": "GCPM"
+				}],
+				"items": {
+					"service": {
+						"name": "5LOYALTY Service Charge",
+						"SKU": "5L66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "5LOYALTY Delivery Fee",
+						"SKU": "5L77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "5LOYALTY channel Discount",
+						"SKU": "5L99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Storekit": {
+				"accountnames": ["Storekit - Pick Up", "Storekit - Delivery"],
+				"accountcodes": ["GOD98", "GOD99"],
+				"deliveryMode": ["COLLECTION", "ON_DELIVERY"],
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Storekit",
+					"code": "STR"
+				}],
+				"items": {
+					"service": {
+						"name": "Storekit Service Charge",
+						"SKU": "ST66",
+						"price": "positive",
+						"accounting group": "Storekit service charge"
+					},
+					"delivery": {
+						"name": "Storekit Delivery Fee",
+						"SKU": "ST77",
+						"price": "positive",
+						"accounting group": "Storekit Discount"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Storekit Discount",
+						"SKU": "ST99",
+						"price": "negative",
+						"accounting group": "Storekit Discount"
+					}
+				}
+			}
+		},{
+			"Slerp": {
+				"accountnames": ["Slerp Delivery", "Slerp Pickup"],
+				"accountcodes": ["SLEDEL", "SLEPP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Slerp",
+					"code": "SLEPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Slerp Service Charge",
+						"SKU": "SLERP66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Slerp Delivery Fee",
+						"SKU": "SLERP77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Slerp Discount",
+						"SKU": "SLERP99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Waitrr": {
+				"accountnames": ["Waitrr"],
+				"accountcodes": ["WAAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Waitrr",
+					"code": "WAPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Waitrr Service Charge",
+						"SKU": "WA66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Waitrr Delivery Fee",
+						"SKU": "WA77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Waitrr Discount",
+						"SKU": "WA99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Flipdish": {
+				"accountnames": ["Flipdish"],
+				"accountcodes": ["FDAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Flipdish",
+					"code": "FDPM"
+				}],
+				"items": {
+					"service": {
+						"name": " Service Charge",
+						"SKU": "FLIP66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": " Delivery Fee",
+						"SKU": "FLIP77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": " Discount",
+						"SKU": "FLIP99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Eat.ch": {
+				"accountnames": ["Eat.ch"],
+				"accountcodes": ["EATAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Eat.ch",
+					"code": "EATPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Eat.ch Service Charge",
+						"SKU": "EAT66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Eat.ch Delivery Fee",
+						"SKU": "EAT77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Eat.ch Discount",
+						"SKU": "EAT99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Rappi": {
+				"accountnames": ["Rappi"],
+				"accountcodes": ["RPPAP"],
+				"deliveryMode":"NONE",
+				"completionMode":"IMMEDIATE",
+				"payment_methods":[{
+					"name": "Rappi",
+					"code": "RPPPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Rappi Service Charge",
+						"SKU": "RPP66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Rappi Delivery Fee",
+						"SKU": "RPP77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Rappi Discount",
+						"SKU": "RPP99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Didi": {
+				"accountnames": ["Didi"],
+				"accountcodes": ["DDFAP"],
+				"deliveryMode":"NONE",
+				"completionMode":"IMMEDIATE",
+				"payment_methods":[{
+					"name": "Didi",
+					"code": "DDFPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Didi Service Charge",
+						"SKU": "DDF66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Didi Delivery Fee",
+						"SKU": "DDF77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Didi Discount",
+						"SKU": "DDF99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"PedidosYa": {
+				"accountnames": ["PedidosYa"],
+				"accountcodes": ["PYAP"],
+				"deliveryMode":"NONE",
+				"completionMode":"IMMEDIATE",
+				"payment_methods":[{
+					"name": "PedidosYa",
+					"code": "PYPM"
+				}],
+				"items": {
+					"service": {
+						"name": "PedidosYa Service Charge",
+						"SKU": "PY66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "PedidosYa Delivery Fee",
+						"SKU": "PY77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "PedidosYa Discount",
+						"SKU": "PY99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"iFood": {
+				"accountnames": ["iFood"],
+				"accountcodes": ["IFOAP"],
+				"deliveryMode": "NONE",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "iFood",
+					"code": "IFOPM"
+				}],
+				"items": {
+					"service": {
+						"name": "iFood Service Charge",
+						"SKU": "IFO66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "iFood Delivery Fee",
+						"SKU": "IFO77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "iFood Discount",
+						"SKU": "IFO99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"HugoApp": {
+				"accountnames": ["HugoApp"],
+				"accountcodes": ["HUAAP"],
+				"deliveryMode": "NONE",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "HugoApp",
+					"code": "HUAPM"
+				}],
+				"items": {
+					"service": {
+						"name": "HugoApp Service Charge",
+						"SKU": "HUA66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "HugoApp Delivery Fee",
+						"SKU": "HUA77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "HugoApp Discount",
+						"SKU": "HUA99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"SevenRoom": {
+				"accountnames": ["SevenRoom"],
+				"accountcodes": ["SRAP"],
+				"deliveryMode": "NONE",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "SevenRoom",
+					"code": "SRPM"
+				}],
+				"items": {
+					"service": {
+						"name": "SevenRoom Service Charge",
+						"SKU": "SR66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "SevenRoom Delivery Fee",
+						"SKU": "SR77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "SevenRoom Discount",
+						"SKU": "SR99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Belorder": {
+				"accountnames": ["Belorder C&C", "Belorder Delivery"],
+				"accountcodes": ["BOCC", "BODE"],
+				"deliveryMode": ["COLLECTION", "REMOTE"],
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Belorder",
+					"code": "BOPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Belorder Service Charge",
+						"SKU": "BO66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Belorder Delivery Fee",
+						"SKU": "BO77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Belorder Discount",
+						"SKU": "BO99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Generic Channel": {
+				"accountnames": ["Generic Channel"],
+				"accountcodes": ["GCAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Generic",
+					"code": "GCPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Generic Orders Service Charge",
+						"SKU": "GO66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Generic Orders Delivery Fee",
+						"SKU": "GO77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Generic Orders Discount",
+						"SKU": "GO99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"ClickEat": {
+				"accountnames": ["ClickEat", "ClickEat - Pickup"],
+				"accountcodes": ["CEAP", "CEAPP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "ClickEat",
+					"code": "CEPM"
+				}],
+				"items": {
+					"service": {
+						"name": "ClickEat Service Charge",
+						"SKU": "CE66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "ClickEat Delivery Fee",
+						"SKU": "CE77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "ClickEat Discount",
+						"SKU": "CE99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Shopify": {
+				"accountnames": ["Shopify", "Shopify - Pickup"],
+				"accountcodes": ["SHOPAP", "SHOPAPP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Shopify",
+					"code": "SHOPPM"
+				}],
+				"items": {
+					"service": {},
+					"delivery": {},
+					"minimumfee": {},
+					"discount": {}
+				}
+			}
+		},{
+			"Wolt": {
+				"accountnames": ["Wolt"],
+				"accountcodes": ["WOAP"],
+				"deliveryMode": "REMOTE",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Wolt",
+					"code": "WOPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Wolt Service Charge",
+						"SKU": "WO66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Wolt Delivery Fee",
+						"SKU": "WO77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Wolt Discount",
+						"SKU": "WO99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"My Menu": {
+				"accountnames": ["My Menu"],
+				"accountcodes": ["MMAP"],
+				"deliveryMode": "REMOTE",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "My Menu",
+					"code": "MMPM"
+				}],
+				"items": {
+					"service": {
+						"name": "My Menu Service Charge",
+						"SKU": "MM66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "My Menu Delivery Fee",
+						"SKU": "MM77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "My Menu Discount",
+						"SKU": "MM99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Dood": {
+				"accountnames": ["Dood"],
+				"accountcodes": ["DOODAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Dood",
+					"code": "DOODPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Dood Service Charge",
+						"SKU": "DOOD66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Dood Delivery Fee",
+						"SKU": "DOOD77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Dood Discount",
+						"SKU": "DOOD99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Sunday": {
+				"accountnames": ["Sunday"],
+				"accountcodes": ["SUNAP"],
+				"deliveryMode": "REMOTE",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Sunday",
+					"code": "SUNPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Sunday Service Charge",
+						"SKU": "SUN66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Sunday Delivery Fee",
+						"SKU": "SUN77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Sunday Discount",
+						"SKU": "SUN99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"OrderPay": {
+				"accountnames": ["OrderPay"],
+				"accountcodes": ["OPAP"],
+				"deliveryMode": "REMOTE",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "OrderPay",
+					"code": "OPPM"
+				}],
+				"items": {
+					"service": {
+						"name": "OrderPay Service Charge",
+						"SKU": "OP66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "OrderPay Delivery Fee",
+						"SKU": "OP77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "OrderPay Discount",
+						"SKU": "OP99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Grubhub": {
+				"accountnames": ["Grubhub"],
+				"accountcodes": ["GHAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Grubhub",
+					"code": "GHPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Grubhub Service Charge",
+						"SKU": "GH66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Grubhub Delivery Fee",
+						"SKU": "GH77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Grubhub Discount",
+						"SKU": "GH99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Postmates": {
+				"accountnames": ["Postmates"],
+				"accountcodes": ["PMAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Postmates",
+					"code": "PMPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Postmates Service Charge",
+						"SKU": "PM66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Postmates Delivery Fee",
+						"SKU": "PM77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Postmates Discount",
+						"SKU": "PM99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Livepepper": {
+				"accountnames": ["Livepepper - A EMPORTER/TAKE AWAY", "Livepepper - LIVRAISON/DELIVERY", "Livepepper - SUR PLACE/ON SITE"],
+				"accountcodes": ["PICKUP", "DELIVERY", "LOCAL"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Livepepper",
+					"code": "LP"
+				},{
+					"name": "Livepepper Cash",
+					"code": "LPCASHPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Livepepper Service Charge",
+						"SKU": "LP66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Livepepper Delivery Fee",
+						"SKU": "LP77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Livepepper Discount",
+						"SKU": "LP99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Gogetters": {
+				"accountnames": ["Gogetters"],
+				"accountcodes": ["GGAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Gogetters",
+					"code": "GGPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Gogetters Service Charge",
+						"SKU": "GG66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Gogetters Delivery Fee",
+						"SKU": "GG77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Gogetters Discount",
+						"SKU": "GG99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Loke": {
+				"accountnames": ["Loke"],
+				"accountcodes": ["LOKEAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Loke",
+					"code": "LOKEPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Loke Service Charge",
+						"SKU": "LOKE66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Loke Delivery Fee",
+						"SKU": "LOKE77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Loke Discount",
+						"SKU": "LOKE99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Ritual": {
+				"accountnames": ["Ritual"],
+				"accountcodes": ["RITAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Ritual",
+					"code": "RITPM"
+				}],
+				"items": {
+					"service": {
+						"name": "Ritual Service Charge",
+						"SKU": "RIT66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "Ritual Delivery Fee",
+						"SKU": "RIT77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "Ritual Discount",
+						"SKU": "RIT99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"MrYum": {
+				"accountnames": ["MrYum"],
+				"accountcodes": ["YUMAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "MrYum",
+					"code": "YUMPM"
+				}],
+				"items": {
+					"service": {
+						"name": "MrYum Service Charge",
+						"SKU": "YUM66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "MrYum Delivery Fee",
+						"SKU": "YUM77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "MrYum Discount",
+						"SKU": "YUM99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"SUPPER London": {
+				"accountnames": ["SUPPER"],
+				"accountcodes": ["SUPAP"],
+				"deliveryMode": "COLLECTION",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "SUPPER",
+					"code": "SUPPM"
+				}],
+				"items": {
+					"service": {
+						"name": "SUPPER Service Charge",
+						"SKU": "SP66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": "SUPPER Delivery Fee",
+						"SKU": "SP77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": "SUPPER Discount",
+						"SKU": "SP99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		},{
+			"Vita Mojo": {
+				"accountnames": ["Vita Mojo TA", "Vita Mojo - Eat in"],
+				"accountcodes": ["VMAP", "VMAP2"],
+				"deliveryMode": "NONE",
+				"completionMode": "IMMEDIATE",
+				"payment_methods":[{
+					"name": "Vitamojo",
+					"code": "VMPM"
+				}],
+				"items": {
+					"service": {
+						"name": " Service Charge",
+						"SKU": "VM66",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"delivery": {
+						"name": " Delivery Fee",
+						"SKU": "VM77",
+						"price": 0,
+						"accounting group": "delivery"
+					},
+					"minimumfee": {},
+					"discount": {
+						"name": " Discount",
+						"SKU": "VM99",
+						"price": "negative",
+						"accounting group": "delivery"
+					}
+				}
+			}
+		}
+	]
+}

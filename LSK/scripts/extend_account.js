@@ -12,7 +12,7 @@ function extend_account(BLid, day, month, year){
 		"sec-gpc": "1",
 		"upgrade-insecure-requests": "1"
 	},
-	"body": `blId=${BLid}&expirationDate=date.struct&expirationDate_day=${day||28}&expirationDate_month=${month||5}&expirationDate_year=${year}`,
+	"body": `blId=${BLid}&expirationDate=date.struct&expirationDate_day=${day||28}&expirationDate_month=${month||5}&expirationDate_year=${year||2030}`,
 	"method": "POST",
 	"mode": "cors",
 	"credentials": "include"
