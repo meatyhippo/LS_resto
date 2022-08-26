@@ -1,45 +1,6 @@
-//TODO fetch to create item
-//TODO fetch to create accounting group
-//TODO fetch to create payment method with "Other payment method"
-//TODO add if length to deliverymodes for Storekit
-//TODO add note to mention what still needs to be done: add items to main screen Deliverect, Link with delivery VAT?
-//TODO find if statement for empty items
-//TODO add unpaid order payment method {"name":"unpaid order", "code":"UNPPM"}
-
-window.accountprofiles = {
-	"dinein": {
-		"name":"API account profile3",
-		"code":"AAP3",
-		"deliveryMode":"NONE",
-		"deliveryDelay=NOTUSED&":"",
-		"minDeliveryDelay=-1&":"",
-		"completionMode=IMMEDIATE&":"",
-		"_consumerRequired=&":"",
-		"_deliverySlipOnReceipt=&":"",
-		"_printNoteOnCreation=&":"",
-		"_forceNoPrintOnlineOrders=&":"",
-		"_playSoundOnOnlineOrders=&":"",
-		"modes":{
-			"off": "NONE",
-			"pickup": "COLLECTION",
-			"delivery":"REMOTE"
-
-		},
-		"completionModes":{
-			"when_pay_received": "IMMEDIATE",
-			"when_ready_delivery": "ON_DELIVERY"
-		}
-	},
+{
 	"deliverect_profiles":[
-		{ // Generic AAP
-			"Generic": {
-				"names":["API account profile"],
-				"codes":["AAP"],
-				"deliveryMode":"NONE",
-				"completionMode":"IMMEDIATE",
-				"items":{}
-			}
-		},{
+		{
 			"Deliveroo": {
 				"accountnames": ["Deliveroo", "Deliveroo - Pickup", "Deliveroo - Eat in"],
 				"accountcodes": ["DVAP", "DVAPP", "DVAPEI"],
@@ -1351,5 +1312,54 @@ window.accountprofiles = {
 				}
 			}
 		}
-	]
+	],
+	"generic_profiles": {
+		"dinein": {
+			"names": ["API account profile"],
+			"codes":["AAP"],
+			"deliveryMode":"NONE",
+			"completionMode": "IMMEDIATE"
+		},
+		"payment_methods":{
+			"name": "API account profile",
+			"code": "AAP"
+		},
+		"RTN": {
+			"names": ["RTN"],
+			"codes":"RTN",
+			"deliveryMode":"NONE",
+			"completionMode": "IMMEDIATE"
+		},
+		"OAPI":{
+
+		},
+		"EPAPI":{
+
+		},
+		"USER":{
+
+		},
+		"delivery": {
+			"names": ["API account profile"],
+			"codes":"AAP",
+			"deliveryMode":"REMOTE",
+			"completionMode": "IMMEDIATE"
+		},
+		"pickup": {
+			"names": ["API account profile"],
+			"codes":"AAP",
+			"deliveryMode":"COLLECTION",
+			"completionMode": "IMMEDIATE"
+		},
+		"modes":{
+			"off/dinein": "NONE",
+			"pickup": "COLLECTION",
+			"delivery":"REMOTE"
+	
+		},
+		"completionModes":{
+			"when_pay_received": "IMMEDIATE",
+			"when_ready_delivery": "ON_DELIVERY"
+		}
+	}
 }

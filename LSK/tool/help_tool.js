@@ -2,8 +2,10 @@
 	//global variables
 	let current_BL = "";
 	location.pathname.includes('/businessLocationDetails')?current_BL = location.search.match(/\d+/gm)[0] : current_BL = "000000000000000";
-	//htmlnode.remove();
-//UI function
+
+	if ($("#overlay-box").length>0) console.log("removed"), htmlnode.remove(), stylenode.remove();
+
+	//UI function
 	function paint_box(){
 		stylenode = document.createElement('style'),
 		htmlnode = document.createElement('div');
@@ -60,18 +62,8 @@
 		<div id="ui-box">
 			<div class="" style="">
 				<div id="extend_account">
-					<p>
-						<b>Extend account</b>
-						<br>
-						Fill in specific date or leave empty for extend until 2030
-					</p>
 				</div>
-				<div id="account_profiles">
-					<p>
-						<b>Add account profiles</b>
-						<br>
-						Select account profiles to be created (generics are always included)
-					</p>
+				<div id="online_order">
 				</div>
 				<div id=""></div>
 			</div>
@@ -92,28 +84,36 @@
 		$('#close-box').click((e)=>{
 			htmlnode.remove();
 			stylenode.remove();
-			/**/console.log(htmlnode)
+			/**/console.log("removed",htmlnode, stylenode);
 		});
 		if (location.pathname.includes('/admin')){
-// functions to add if on admin page
+			// functions to add if on admin page
+			/**/console.log("admin");
 			addfunc('extend_account');
 		}else{
 			// functions to add if in account
-			addfunc('account_profiles');
+			/**/console.log("account");
+			addfunc('online_order');
+			addfunc('deliverect');
 		}
-	})
-	.catch((e)=>{/**/console.log(e);});
+	}).catch((e)=>{/**/console.log(e);});
 
-// general function to add lines to the UI
+	//functions to add title and content
+	function addparagraph(location, text){
+		$(location).append(`<p>${text}</p>`);
+	}
+
+	// main function to add lines to the UI
 	function addfunc(title){
 		switch (title) {
 			case 'extend_account':
-				//get extend account function
-				$.get("https://meatyhippo.github.io/LS_resto/LSK/scripts/extend_account.js",(data)=>{/**/console.log(title, 'function loaded: ', data);});
+				addparagraph('#extend_account', `<b>Extend account</b><br>Fill in specific date or leave empty for extend until 2030`);
 
+				//get extend account function
+				$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/extend_account.js",(data)=>{/**/console.log(title, 'function loaded: ', data);});
+				
 				//set input fields
-				let fields = {"blID":{"element":"input","attributes":{"placeholder":current_BL,"id":"blID"},"label":{"for":"blID","html":"Business location"}},"date":{"element":"input","attributes":{"placeholder":"28","id":"date"},"label":{"for":"date","html":"Day"}},"month":{"element":"input","attributes":{"placeholder":"05","id":"month"},"label":{"for":"month","html":"Month"}},"year":{"element":"input","attributes":{"placeholder":"2030","id":"year"},"label":{"for":"year","html":"Year"}},"button":{"element":"button","attributes":
-				{"id": "submit_extend","class":"btn"}}}
+				let fields = {"blID":{"element":"input","attributes":{"placeholder":current_BL,"id":"blID"},"label":{"for":"blID","html":"Business location"}},"date":{"element":"input","attributes":{"placeholder":"28","id":"date"},"label":{"for":"date","html":"Day"}},"month":{"element":"input","attributes":{"placeholder":"05","id":"month"},"label":{"for":"month","html":"Month"}},"year":{"element":"input","attributes":{"placeholder":"2030","id":"year"},"label":{"for":"year","html":"Year"}},"button":{"element":"button","attributes":{"id": "submit_extend","class":"btn"}}}
 				extend = document.createElement('form');
 				for (const key in fields) {
 					if (Object.hasOwnProperty.call(fields, key)) {
@@ -137,25 +137,35 @@
 					${$('#blID')[0].value?$('#blID')[0].value:$('#blID')[0].placeholder},
 					${$('#date')[0].value?$('#date')[0].value:$('#date')[0].placeholder},
 					${$('#month')[0].value?$('#month')[0].value:$('#month')[0].placeholder},
-					${$('#year')[0].value?$('#year')[0].value:$('#year')[0].placeholder})`).html('submit account extend')
-				
+					${$('#year')[0].value?$('#year')[0].value:$('#year')[0].placeholder})`).html('submit account extend');
 				break;
-			case 'account_profiles':
-				$.get("https://meatyhippo.github.io/LS_resto/LSK/scripts/LSK_account_profiles.js",
+
+			case 'online_order':
+				addparagraph('#online_order', `<b>Setup online orders</b><br>Creates account profiles, payment methods, RTN and activates API`);
+				
+				//get online order function
+				$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/online_order_setup.js",
 				function (data) {
 					console.log(title+'function loaded:', '\n', data)
 				})
 				break;
+
 			case 'deliverect':
-				$.get("https://meatyhippo.github.io/LS_resto/LSK/scripts/LSK_account_profiles.js",
+				addparagraph('#deliverect', `<b>Setup Deliverect</b><br>Creates account profiles, payment methods, RTN and activates API`);
+
+				//get deliverect function
+				$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/LSK_account_profiles.js",
 				function (data) {
 					console.log(title+'function loaded:', '\n', data);
-				})
-				.get("https://meatyhippo.github.io/LS_resto/LSK/scripts/LSK_account_profiles.js",
+				})//get account profiles JSON
+				.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/deliverect_account_profiles.json",
 				(data)=>{
 					/**/console.log(data);
+					selectionlist = document.createElement('form');
+
 				})
 				break;
+
 			default:
 				break;
 		}
