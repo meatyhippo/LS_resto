@@ -5,7 +5,7 @@
 
 	if ($("#overlay-box").length>0) console.log("removed"), htmlnode.remove(), stylenode.remove();
 
-	//UI function
+	// paint the UI
 	function paint_box(){
 		stylenode = document.createElement('style'),
 		htmlnode = document.createElement('div');
@@ -65,7 +65,7 @@
 				</div>
 				<div id="online_order">
 				</div>
-				<div id=""></div>
+				<div id="deliverect"></div>
 			</div>
 		</div>`;
 		document.body.append(htmlnode, stylenode);
@@ -102,6 +102,22 @@
 	function addparagraph(location, text){
 		$(location).append(`<p>${text}</p>`);
 	}
+	
+	//get extend account function
+	$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/extend_account.js",(data)=>{/**/console.log('extend account function loaded:', '\n', data)});
+	//get online order function
+	$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/online_order_setup.js",(data)=>{/**/console.log('online order function loaded:', '\n', data)});
+	//get deliverect function
+	$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/account_profiles.js",
+	function (data) {
+		console.log(title+'function loaded:', '\n', data);
+	})//get account profiles JSON
+	.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/online_order_setup.js",
+	(data)=>{
+		/**/console.log(data);
+		selectionlist = document.createElement('form');
+
+	})
 
 	// main function to add lines to the UI
 	function addfunc(title){
@@ -109,9 +125,6 @@
 			case 'extend_account':
 				addparagraph('#extend_account', `<b>Extend account</b><br>Fill in specific date or leave empty for extend until 2030`);
 
-				//get extend account function
-				$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/extend_account.js",(data)=>{/**/console.log(title, 'function loaded: ', data);});
-				
 				//set input fields
 				let fields = {"blID":{"element":"input","attributes":{"placeholder":current_BL,"id":"blID"},"label":{"for":"blID","html":"Business location"}},"date":{"element":"input","attributes":{"placeholder":"28","id":"date"},"label":{"for":"date","html":"Day"}},"month":{"element":"input","attributes":{"placeholder":"05","id":"month"},"label":{"for":"month","html":"Month"}},"year":{"element":"input","attributes":{"placeholder":"2030","id":"year"},"label":{"for":"year","html":"Year"}},"button":{"element":"button","attributes":{"id": "submit_extend","class":"btn"}}}
 				extend = document.createElement('form');
@@ -132,38 +145,22 @@
 				}
 				//paint div to ui box
 				document.getElementById(title).append(extend);
-				$('#submit_extend').attr("onClick",`
-				extend_account(
-					${$('#blID')[0].value?$('#blID')[0].value:$('#blID')[0].placeholder},
-					${$('#date')[0].value?$('#date')[0].value:$('#date')[0].placeholder},
-					${$('#month')[0].value?$('#month')[0].value:$('#month')[0].placeholder},
-					${$('#year')[0].value?$('#year')[0].value:$('#year')[0].placeholder})`).html('submit account extend');
+				$('#submit_extend').click(()=>{
+					try {						
+						extend_account($('#blID')[0].value?$('#blID')[0].value:$('#blID')[0].placeholder, $('#date')[0].value?$('#date')[0].value:$('#date')[0].placeholder, $('#month')[0].value?$('#month')[0].value:$('#month')[0].placeholder, $('#year')[0].value?$('#year')[0].value:$('#year')[0].placeholder)
+					} catch (error) {
+						alert(error);
+					}
+				}).html('submit account extend');
 				break;
-
 			case 'online_order':
 				addparagraph('#online_order', `<b>Setup online orders</b><br>Creates account profiles, payment methods, RTN and activates API`);
 				
 				//get online order function
-				$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/online_order_setup.js",
-				function (data) {
-					console.log(title+'function loaded:', '\n', data)
-				})
 				break;
-
 			case 'deliverect':
 				addparagraph('#deliverect', `<b>Setup Deliverect</b><br>Creates account profiles, payment methods, RTN and activates API`);
 
-				//get deliverect function
-				$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/LSK_account_profiles.js",
-				function (data) {
-					console.log(title+'function loaded:', '\n', data);
-				})//get account profiles JSON
-				.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/deliverect_account_profiles.json",
-				(data)=>{
-					/**/console.log(data);
-					selectionlist = document.createElement('form');
-
-				})
 				break;
 
 			default:

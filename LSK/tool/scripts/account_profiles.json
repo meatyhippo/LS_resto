@@ -1339,6 +1339,7 @@
 		"USER":{
 
 		},
+		"following just examples":{},
 		"delivery": {
 			"names": ["API account profile"],
 			"codes":"AAP",
@@ -1351,11 +1352,10 @@
 			"deliveryMode":"COLLECTION",
 			"completionMode": "IMMEDIATE"
 		},
-		"modes":{
+		"deliveryMode":{
 			"off/dinein": "NONE",
 			"pickup": "COLLECTION",
 			"delivery":"REMOTE"
-	
 		},
 		"completionModes":{
 			"when_pay_received": "IMMEDIATE",

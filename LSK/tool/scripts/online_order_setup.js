@@ -1,5 +1,5 @@
 async function add_profile(profile){
-	profile.names.forEach((element, i) => {
+	profile.names.forEach(async (element, i) => {
 		await fetch(location.origin+"/configuration/saveTag", {
 			"headers": {
 				"accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",

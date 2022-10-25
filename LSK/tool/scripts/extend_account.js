@@ -17,6 +17,6 @@ function extend_account(BLid, day, month, year){
 	"mode": "cors",
 	"credentials": "include"
 	})
-	.then(res => /**/console.log('extended:', res))
+	.then(res => /**/console.log('extended:', res),location.reload())
 	.catch(e=> /**/console.log('error extending:', e))
 }
