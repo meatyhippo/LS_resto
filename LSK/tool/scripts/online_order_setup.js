@@ -92,6 +92,7 @@ function deliverect(selected_channels, include_items){
 	}, 1000);
 }
 function generic_setup(){
+	console.log('starting online order setup');
 	let payment_method = "",
 	user = "",
 	account_profile = "";

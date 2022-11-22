@@ -1325,7 +1325,7 @@
 			"code": "AAP"
 		},
 		"RTN": {
-			"names": ["RTN"],
+			"names": "RTN",
 			"codes":"RTN",
 			"deliveryMode":"NONE",
 			"completionMode": "IMMEDIATE"
@@ -1339,7 +1339,7 @@
 		"USER":{
 
 		},
-		"following just examples":{},
+		"just for data":{
 		"delivery": {
 			"names": ["API account profile"],
 			"codes":"AAP",
@@ -1360,6 +1360,6 @@
 		"completionModes":{
 			"when_pay_received": "IMMEDIATE",
 			"when_ready_delivery": "ON_DELIVERY"
-		}
+		}}
 	}
 }

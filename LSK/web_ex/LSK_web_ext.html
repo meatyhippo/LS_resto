@@ -137,10 +137,11 @@
 				"<p>Device ID: " + posContext.deviceId + "</p>" +
 				"<p>User Name: " + posContext.userName + "</p>" +
 				"<p>User ID: " + posContext.userId + "</p>" +	
-				"<p>App Version: " + printVersion() + "</p>"
-		};
-
+				"<p>App Version: " + printVersion() + "</p>";
+			};
+			
 		function getCurrentAccount() {
+			document.getElementById('log_dump').innerHTML = JSON.stringify(posContext);
 			/**/console.log('load');
 			const setaccount = function (response){
 				window.currentAccount = response.data;
@@ -189,6 +190,7 @@
 				}
 			}
 		}
+
 	</script>
 </head>
 
