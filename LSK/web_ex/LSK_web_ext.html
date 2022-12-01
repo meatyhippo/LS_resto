@@ -14,6 +14,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
 		integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous">
 	</script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jbialobr/JsQRScanner/docs/js/jsqrscanner.nocache.js"></script>
 	<style>
 		@media(min-width: 768px) {
 			.flex {
@@ -68,24 +69,28 @@
 		}
 
 		function printContext() {
-			document.getElementById("request").innerHTML =
-				"<p>Business ID: " + posContext.businessId + "</p>" +
-				"<p>Business Name: " + posContext.businessName + "</p>" +
-				"<p>Location ID: " + posContext.locationId + "</p>" +
-				"<p>Location Name: " + posContext.locationName + "</p>" +
-				"<p>Configuration: " + posContext.configurationName + "</p>" +
-				"<p>Device Name: " + posContext.deviceName + "</p>" +
-				"<p>Device ID: " + posContext.deviceId + "</p>" +
-				"<p>User Name: " + posContext.userName + "</p>" +
-				"<p>User ID: " + posContext.userId + "</p>" +	
-				"<p>App Version: " + printVersion() + "</p>"
+			try {
+				document.getElementById("request").innerHTML =
+					"<p>Business ID: " + posContext.businessId + "</p>" +
+					"<p>Business Name: " + posContext.businessName + "</p>" +
+					"<p>Location ID: " + posContext.locationId + "</p>" +
+					"<p>Location Name: " + posContext.locationName + "</p>" +
+					"<p>Configuration: " + posContext.configurationName + "</p>" +
+					"<p>Device Name: " + posContext.deviceName + "</p>" +
+					"<p>Device ID: " + posContext.deviceId + "</p>" +
+					"<p>User Name: " + posContext.userName + "</p>" +
+					"<p>User ID: " + posContext.userId + "</p>" +	
+					"<p>App Version: " + printVersion() + "</p>"
+			} catch (error) {
+				document.getElementById('log_dump').innerHTML = error;
+			}
 		}
 
 		function printVersion() {
 			const printResult = function (response) {
 				return response.data
 			};
-			pos_getVersion(printResult)
+			return pos_getVersion(printResult)
 		}
 
 		function printMessage(message) {
@@ -126,24 +131,69 @@
 		}
 
 		function printResult() {
-			document.getElementById("account").innerHTML = JSON.stringify(currentAccount, null, 2) //syntaxHighlight(response.data)
-			document.getElementById("account").innerHTML =
-				"<p>Business ID: " +  + "</p>" +
-				"<p>Business Name: " + posContext.businessName + "</p>" +
-				"<p>Location ID: " + posContext.locationId + "</p>" +
-				"<p>Location Name: " + posContext.locationName + "</p>" +
-				"<p>Configuration: " + posContext.configurationName + "</p>" +
-				"<p>Device Name: " + posContext.deviceName + "</p>" +
-				"<p>Device ID: " + posContext.deviceId + "</p>" +
-				"<p>User Name: " + posContext.userName + "</p>" +
-				"<p>User ID: " + posContext.userId + "</p>" +	
-				"<p>App Version: " + printVersion() + "</p>";
+			document.getElementById("account").innerHTML = `
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Order info</th>
+						</tr>
+					</thead>
+					<tbody id="orderdata">
+						<tr>
+							<td>Order ID</td>
+							<td>Total amount</td>
+							<td>Paid amount</td>
+							<td>Remaining amount</td>
+							<td>Client count</td>
+							<td>Price per client</td>
+							<td>Account profile</td>
+						</tr>
+						<tr>
+							<td>${currentAccount.name}</td>
+							<td>€ ${currentAccount.totalAmount / 100}</td>
+							<td>€ ${currentAccount.paidAmount / 100}</td>
+							<td>€ ${(currentAccount.totalAmount - currentAccount.paidAmount) / 100}</td>
+							<td>${currentAccount.clientCount}</td>
+							<td>€ ${currentAccount.clientCount > 0 ? currentAccount.totalAmount / currentAccount.clientCount / 100: currentAccount.totalAmount / 100}</td>
+							<td>${currentAccount.profileName}</td>
+						</tr>
+						<th>Orderlines</th>
+						<tr class="items">
+							<td>Item SKU</td>
+							<td>Item name</td>
+							<td>Sent to kitchen</td>
+							<td>Quantity</td>
+							<td>Unit price</td>
+							<td>Total price</td>
+							<td>Discounts</td>
+							<td>Item id</td>
+						</tr>
+					</tbody>
+				</table>
+					${JSON.stringify(currentAccount, null, 2)}`
+				currentAccount.transactionLines.forEach((item, i) => {
+					
+					document.querySelector("#orderdata tr.items")
+							.insertAdjacentHTML('afterend',`
+							<tr>
+								<td>${item.itemSku}</td>
+								<td>${item.text}</td>
+								<td>${!item.isDraft}</td>
+								<td>${item.quantity / 100}</td>
+								<td>€ ${item.unitAmount / 100}</td>
+								<td>€ ${item.amount / 100}</td>
+								<td>${JSON.stringify(item.discounts)}</td>
+								<td>${item.itemIdentifier}</td>
+							</tr>
+							`)
+				});
 			};
 			
 		function getCurrentAccount() {
-			document.getElementById('log_dump').innerHTML = JSON.stringify(posContext);
+			document.getElementById('log_dump').innerHTML = 'loaded';
 			/**/console.log('load');
 			const setaccount = function (response){
+				//document.getElementById('log_dump').innerHTML = JSON.stringify(response);
 				window.currentAccount = response.data;
 				document.getElementById('amount').placeholder = response.data.totalAmount/100;
 			}
@@ -190,8 +240,86 @@
 				}
 			}
 		}
-
+		
+		//QR code 
 	</script>
+	  <script type="text/javascript">
+		function onQRCodeScanned(scannedText)
+		{
+			var scannedTextMemo = document.getElementById("scannedTextMemo");
+			if(scannedTextMemo)
+			{
+				scannedTextMemo.value = scannedText;
+			}
+			var scannedTextMemoHist = document.getElementById("scannedTextMemoHist");
+			if(scannedTextMemoHist)
+			{
+				scannedTextMemoHist.value = scannedTextMemoHist.value + '\n' + scannedText;
+			}
+		}
+		
+		function provideVideo()
+		{
+			var n = navigator;
+	
+			if (n.mediaDevices && n.mediaDevices.getUserMedia)
+			{
+			  return n.mediaDevices.getUserMedia({
+				video: {
+				  facingMode: "environment"
+				},
+				audio: false
+			  });
+			} 
+			
+			return Promise.reject('Your browser does not support getUserMedia');
+		}
+	
+		function provideVideoQQ()
+		{
+			return navigator.mediaDevices.enumerateDevices()
+			.then(function(devices) {
+				var exCameras = [];
+				devices.forEach(function(device) {
+				if (device.kind === 'videoinput') {
+				  exCameras.push(device.deviceId)
+				}
+			 });
+				
+				return Promise.resolve(exCameras);
+			}).then(function(ids){
+				if(ids.length === 0)
+				{
+				  return Promise.reject('Could not find a webcam');
+				}
+				
+				return navigator.mediaDevices.getUserMedia({
+					video: {
+					  'optional': [{
+						'sourceId': ids.length === 1 ? ids[0] : ids[1]//this way QQ browser opens the rear camera
+						}]
+					}
+				});        
+			});                
+		}
+		
+		//this function will be called when JsQRScanner is ready to use
+		function JsQRScannerReady()
+		{
+			//create a new scanner passing to it a callback function that will be invoked when
+			//the scanner succesfully scan a QR code
+			var jbScanner = new JsQRScanner(onQRCodeScanned);
+			//var jbScanner = new JsQRScanner(onQRCodeScanned, provideVideo);
+			//reduce the size of analyzed image to increase performance on mobile devices
+			jbScanner.setSnapImageMaxSize(300);
+			var scannerParentElement = document.getElementById("scanner");
+			if(scannerParentElement)
+			{
+				//append the jbScanner to an existing DOM element
+				jbScanner.appendTo(scannerParentElement);
+			}        
+		}
+	  </script>
 </head>
 
 <body onload="">
@@ -204,19 +332,22 @@
 			<h1>LSK Web Extensions Demo</h1>
 		</div>
 		<hr>
+
 <!-- POS context -->
 		<div class="container newline text-left">
 			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="printContext()">Show POS
 				Context</button>
-			<button type="button" class="btn btn-lg btn-ls" onclick="hideContent('request')">Hide Context</button>
+			<button type="button" class="btn btn-lg btn-ls" onclick="hideContent('request')">Clear</button>
 			<div id="request"></div>
 		</div>
+
 <!-- current acount context -->
 		<div class="container newline text-left">
 			<button type="button" class="btn btn-outline-primary btn-lg btn-ls" onclick="printResult()">Get Current Account</button>
 			<button type="button" class="btn btn-lg btn-ls" onclick="hideContent('account')">Clear</button>
 			<div id="account"></div>
 		</div>
+
 <!-- add loyalty -->
 		<div class="container newline text-left">
 			<div class="row">
@@ -237,6 +368,7 @@
 				</div>
 			</div>
 		</div>
+
 <!-- choose payment method -->
 		<div class="container newline text-left">
 			<div class="dropdown">
@@ -255,6 +387,7 @@
 				</div>
 			</div>
 		</div>
+
 <!-- pay for account -->
 		<div class="container newline text-left">
 			<div class="row">
@@ -313,6 +446,49 @@
 			</form>
 		</div>
 		<div id="log_dump" class="row" ></div><button type="button" class="btn btn-lg btn-ls" onclick="hideContent('log_dump')">Clear</button>
+		<div class="row-element-set row-element-set-QRScanner">
+			<h1>JsQRScanner example</h1>
+			<div class="row-element">
+			  <div class="FlexPanel detailsPanel QRScannerShort">
+				<div class="FlexPanel shortInfoPanel">
+				  <div class="gwt-HTML">
+					Point the webcam to a QR code.
+				  </div>
+				</div>
+			  </div>
+			</div>
+			<br>
+			<div class="row-element">
+			  <div class="qrscanner" id="scanner">
+			  </div>
+			</div>
+			<div class="row-element">
+			  <div class="form-field form-field-memo">
+				<div class="form-field-caption-panel">
+				  <div class="gwt-Label form-field-caption">
+					Scanned text
+				  </div>
+				</div>
+				<div class="FlexPanel form-field-input-panel">
+				  <textarea id="scannedTextMemo" class="textInput form-memo form-field-input textInput-readonly" rows="3" readonly>
+				  </textarea>
+				</div>
+			  </div>
+			  <div class="form-field form-field-memo">
+				<div class="form-field-caption-panel">
+				  <div class="gwt-Label form-field-caption">
+					Scanned text history
+				  </div>
+				</div>
+				<div class="FlexPanel form-field-input-panel">
+				  <textarea id="scannedTextMemoHist" class="textInput form-memo form-field-input textInput-readonly" value="" rows="6" readonly>
+				  </textarea>
+				</div>
+			  </div>
+			</div>
+			<br>
+			<a style="font-weight: bold;" href="https://github.com/jbialobr/JsQRScanner">The source code is hosted on GitHub</a>
+		  </div>
 	</div>
 </body>
 </html>

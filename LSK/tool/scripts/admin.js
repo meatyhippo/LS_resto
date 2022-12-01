@@ -20,22 +20,29 @@ function extend_account(BLid, day, month, year){
 	.then(res => /**/console.log('extended:', res),location.reload())
 	.catch(e=> /**/console.log('error extending:', e))
 }
-function search(value,subject){
+function search(data){
 	// switch based on subject to pass into query
-	switch (subject) {
-		case 'location':
-			viewName = 'BusinessLocation.list';
-			prop = 'id';
-			sValue = value;
-			break;
-		case 'user':
-			viewName = 'Staff.backofficeUsers';
-			prop = 'emailAddress';
-			sValue = value;
-			break;
-		default:
-			break;
-	}
+	/**
+	 * data: {
+	 * 		'prop':'',
+	 * 		'viewName':'',	
+	 * 		'sValue':''
+	 * }
+	 */
+	//switch (subject) {
+	//	case 'location':
+	//		viewName = 'BusinessLocation.list';
+	//		prop = 'id';
+	//		sValue = value;
+	//		break;
+	//	case 'user':
+	//		viewName = 'Staff.backofficeUsers';
+	//		prop = 'emailAddress';
+	//		sValue = value;
+	//		break;
+	//	default:
+	//		break;
+	//}
 	// fetch the data
 	fetch("https://manager.trial.lsk.lightspeed.app/criteria/datatables", {
 		"headers": {
@@ -44,11 +51,22 @@ function search(value,subject){
 			"x-requested-with": "XMLHttpRequest"
 		},
 		"referrer": "https://manager.trial.lsk.lightspeed.app/admin/locations",
-		"body": `sEcho=1&iColumns=4&sColumns=4&mDataProp_0=${prop||''}&sSearch=&bRegex=false&sSearch_0=${sValue||''}&bRegex_0=false&bSearchable_0=true&viewName=${viewName}&viewFormat=jQueryTable&blScoped=true&_arg_businessId=`,
+		"body": `sEcho=1&iColumns=4&sColumns=4&mDataProp_0=${data.prop}&sSearch=&bRegex=false&sSearch_0=${data.sValue}&bRegex_0=false&bSearchable_0=true&viewName=${data.viewName}&viewFormat=jQueryTable&blScoped=true&_arg_businessId=`,
 		"method": "POST",
 		"mode": "cors",
 		"credentials": "include"
 	}).then(res=>{
 		res.json().then(json =>console.log(json.aaData[0]))
 	})
-} //search('cassia@ikentoo.com','user')
+} /** 
+search({
+	'prop': 'emailAddress',
+	'viewName': 'Staff.backofficeUsers',
+	'sValue':'cassia@ikentoo.com'
+})
+search({
+	'prop': 'id',
+	'viewName': 'BusinessLocation.list',
+	'sValue': '25769803788'
+})
+*/

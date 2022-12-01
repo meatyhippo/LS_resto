@@ -1,4 +1,8 @@
 (()=>{
+	if(window.LSK) stylenode.remove(), htmlnode.remove();
+	if(!window.LSK) window.LSK = {}
+
+	window.scrollTo(0, 0);
 	//global variables
 	let current_BL = "";
 	location.pathname.includes('/businessLocationDetails')?current_BL = location.search.match(/\d+/gm)[0] : current_BL = "000000000000000";
@@ -8,6 +12,7 @@
 	function addcss(){
 		stylenode = document.createElement('style'),
 		stylenode.innerHTML = `
+		/* css for account BO */
 		.flame-header{
 			height: fit-content !important;
 			flex-direction: column !important;
@@ -24,6 +29,9 @@
 		#ui-box > div , .business-info{
 			padding: 1.125rem !important;
 		}
+		/* css for admin BO */
+
+		/* general css */
 		#ui-box label, #ui-box input, #ui-box label:focus, #ui-box input:focus {
 			width: 45%;
 			margin-bottom: 5px;
@@ -31,9 +39,6 @@
 		#ui-box label {
 			float: left;
 			margin-right: 2%;
-		}
-		#ui-box input {
-			/*float: right;*/
 		}
 		`;
 		document.body.append(stylenode);
@@ -45,11 +50,14 @@
 		htmlnode.id = "ui-box"
 		htmlnode.innerHTML = `
 		<div class="" style="">
-			<div id="extend_account"></div>
-			<div id="online_order"></div>
-			<div id="deliverect"></div>
+			<h3>Quick tools</h3>
+			<div class="tool_row" style="display: flex; flex-direction: row; width: 100%;">
+				<div id="extend_account"></div>
+				<div id="search_BL"></div>
+				<div id="search_user"></div>
+			</div>
 		</div>`;
-		$('#content').append(htmlnode);
+		$('#content').prepend(htmlnode);
 	}
 	// UI for account BO
 	function paint_account_box(){
@@ -57,7 +65,6 @@
 		htmlnode.id = "ui-box"
 		htmlnode.innerHTML = `
 		<div class="" style="">
-			<div id="extend_account"></div>
 			<div id="online_order"></div>
 			<div id="deliverect"></div>
 		</div>`;
@@ -70,26 +77,27 @@
 		let createbox = new Promise((resolve, reject)=>{
 			resolve(paint_admin_box());
 		}).then((fullfilled)=>{
+			/**/console.log("admin UI added");
 			//get admin functions
-			$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('extend account function loaded:', '\n', data)})
-			/**/console.log("admin");
+			$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('Admin functions loaded:', '\n', data)})
 			// UI functions to add if on admin page
 			addfunc('extend_account'); //add extend account function
-			addfunc('search_location'); //add search location function
+			addfunc('search_BL'); //add search location function
 			addfunc('search_user'); //add search user function
 		}).catch((e)=>{/**/console.log(e);});
+		
 	} else {
 		//promise to only add functions after UI is created
 		let createbox = new Promise((resolve, reject)=>{
 			resolve(paint_account_box());
 		}).then((fullfilled)=>{
+			/**/console.log("account UI added");
 			//get online order implementation function
 			$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/online_order_setup.js",(data)=>{/**/console.log('online order function loaded:', '\n', data)})
 			//get account profiles JSON
 			let profiles = fetch("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/account_profiles.json");
 			let profilesJSON = profiles.then(res=> {res.json()})
-			/**/console.log("account");
-			// functions to add if in account
+			// UI functions to add if in account
 			addfunc('online_order'); //add online order function
 			addfunc('deliverect'); //add deliverect function
 		}).catch((e)=>{/**/console.log(e);});
@@ -99,42 +107,156 @@
 	function addparagraph(location, text){
 		$(location).append(`<p>${text}</p>`);
 	}
-
+	function addinputfields(fields, location){
+		for (const key in fields) {
+			if (Object.hasOwnProperty.call(fields, key)) {
+				const field = fields[key];
+				div = document.createElement('div');
+				element = document.createElement(field.element);
+				$(element).attr(field.attributes);
+				if (field.label){
+					label = document.createElement('label');
+					$(label).attr('for', field.label.for).html(field.label.html)
+					div.append(label);
+				}
+				div.append(element);
+				location.append(div);
+			}
+		}
+	}
 	
 	// main function to add lines to the UI
 	function addfunc(title){
 		switch (title) {
 			case 'extend_account':
-				addparagraph('#extend_account', `<b>Extend account</b><br>Fill in specific date or leave empty for extend until 2030`);
-				
-				//set input fields
-				let fields = {"blID":{"element":"input","attributes":{"placeholder":current_BL,"id":"blID"},"label":{"for":"blID","html":"Business location"}},"date":{"element":"input","attributes":{"placeholder":"28","id":"date"},"label":{"for":"date","html":"Day"}},"month":{"element":"input","attributes":{"placeholder":"05","id":"month"},"label":{"for":"month","html":"Month"}},"year":{"element":"input","attributes":{"placeholder":"2030","id":"year"},"label":{"for":"year","html":"Year"}},"button":{"element":"button","attributes":{"id": "submit_extend","class":"btn"}}}
-				extend = document.createElement('form');
-				for (const key in fields) {
-					if (Object.hasOwnProperty.call(fields, key)) {
-						const field = fields[key];
-						div = document.createElement('div');
-						element = document.createElement(field.element);
-						$(element).attr(field.attributes);
-						if (field.label){
-							label = document.createElement('label');
-							$(label).attr('for', field.label.for).html(field.label.html)
-							div.append(label);
+				addparagraph('#extend_account', `<h4>Extend account</h4>Fill in specific date or leave empty for extend until 2030`);
+				//set input fields to extend account if date left empty, auto extend until 2030.
+				fields = {
+					"blID":{
+						"element":"input",
+						"attributes":{
+							"placeholder":current_BL,
+							"id":"blID"
+						},
+						"label":{
+							"for":"blID",
+							"html":"Business location"
 						}
-						div.append(element);
-						extend.append(div);
-					}
-				}
-				//paint div to ui box
+					},"date":{"element":"input","attributes":{"placeholder":"28","id":"date"},"label":{"for":"date","html":"Day"}},"month":{"element":"input","attributes":{"placeholder":"05","id":"month"},"label":{"for":"month","html":"Month"}},"year":{"element":"input","attributes":{"placeholder":"2030","id":"year"},"label":{"for":"year","html":"Year"}},"button":{"element":"button","attributes":{"id": "submit_extend","class":"btn"}}}
+
+				// parse above fields into UI
+				extend = document.createElement('form');
+				addinputfields(fields, extend);
 				document.getElementById(title).append(extend);
+
 				//add event listener to button to extend account
 				$('#submit_extend').click(()=>{
-					try {						
-						extend_account($('#blID')[0].value?$('#blID')[0].value:$('#blID')[0].placeholder, $('#date')[0].value?$('#date')[0].value:$('#date')[0].placeholder, $('#month')[0].value?$('#month')[0].value:$('#month')[0].placeholder, $('#year')[0].value?$('#year')[0].value:$('#year')[0].placeholder)
+					try {
+						extend_account($('#blID')[0].value?$('#blID')[0].value:$('#blID')[0].placeholder,
+							$('#date')[0].value?$('#date')[0].value:$('#date')[0].placeholder,
+							$('#month')[0].value?$('#month')[0].value:$('#month')[0].placeholder,
+							$('#year')[0].value?$('#year')[0].value:$('#year')[0].placeholder)
 					} catch (error) {
-						alert(error);
+						console.log(error);
 					}
 				}).html('submit account extend');
+				
+			break;
+			case 'search_BL':
+				addparagraph('#search_BL', `<h4>Search location</h4>Fill in specific location id OR search by name`);
+				//set input fields for function 
+				fields = {
+					"blID":{
+						"element":"input",
+						"attributes":{
+							"placeholder":current_BL,
+							"id":"s_blID"
+						},
+						"label":{
+							"for":"s_blID",
+							"html":"Business location search"
+						}
+					},
+					"blName":{
+						"element":"input",
+						"attributes":{
+							"placeholder":"Enter name",
+							"id":"s_blName"
+						},
+						"label":{
+							"for":"s_blName",
+							"html":"Business location search"
+						}
+					},
+					"button":{
+						"element":"button",
+						"attributes":{
+							"id": "submit_bl_search",
+							"class":"btn"
+						}
+					}
+				}
+				// parse above fields into UI
+				search_blid = document.createElement('form');
+				addinputfields(fields, search_blid);
+				document.getElementById(title).append(search_blid);
+				$('#submit_bl_search').click(()=>{
+					try {
+						search()
+					} catch (error) {
+						console.log(error);
+					}
+				}).html('submit account extend');
+			break;
+			case 'search_user':
+				addparagraph('#search_user', `<h4>Search BO user</h4>Fill in specific location id OR search by name`);
+				fields = {
+					"usermail":{
+						"element":"input",
+						"attributes":{
+							"placeholder":$('#primary-nav li.business p')[0].innerHTML,
+							"id":"s_usermail"
+						},
+						"label":{
+							"for":"s_usermail",
+							"html":"Search user by email"
+						}
+					},
+					"username":{
+						"element":"input",
+						"attributes":{
+							"placeholder":"Enter name",
+							"id":"s_username"
+						},
+						"label":{
+							"for":"s_username",
+							"html":"Search user by name (first or last)"
+						}
+					},
+					"button":{
+						"element":"button",
+						"attributes":{
+							"id": "submit_user_search",
+							"class":"btn"
+						}
+					}
+				}
+				// parse above fields into UI
+				search_user = document.createElement('form');
+				addinputfields(fields, search_user);
+				document.getElementById(title).append(search_user);
+				$('#submit_user_search').click(()=>{
+					try {
+						search({
+							'prop': 'emailAddress',
+							'viewName': 'Staff.backofficeUsers',
+							'sValue': s_usermail.value
+						});
+					} catch (error) {
+						console.log(error);
+					}
+				}).html('Search BO user');
+
 			break;
 			case 'online_order':
 				//get online order function
@@ -152,6 +274,7 @@
 				});
 				div.appendChild(button);
 				document.getElementById(title).append(div);
+
 			break;
 			case 'deliverect':
 				addparagraph('#'+title, `<b>Setup Deliverect</b><br>Creates account profiles, payment methods, RTN and activates API. Does not include generi setup.`);
@@ -170,7 +293,6 @@
 				document.getElementById(title).append(div);
 				selectionlist = document.createElement('form');
 			break;
-
 			default:
 			break;
 		}
