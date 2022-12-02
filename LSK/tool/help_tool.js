@@ -1,4 +1,4 @@
-(()=>{
+//(()=>{
 	if(window.LSK) stylenode.remove(), htmlnode.remove();
 	if(!window.LSK) window.LSK = {}
 
@@ -32,6 +32,12 @@
 		/* css for admin BO */
 
 		/* general css */
+		.tool-container{
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			justify-content: space-evenly;
+		}
 		#ui-box label, #ui-box input, #ui-box label:focus, #ui-box input:focus {
 			width: 45%;
 			margin-bottom: 5px;
@@ -39,6 +45,10 @@
 		#ui-box label {
 			float: left;
 			margin-right: 2%;
+		}
+		#ui-box input {
+			border: 1px solid lightgrey;
+			border-radius: 5px;
 		}
 		`;
 		document.body.append(stylenode);
@@ -51,7 +61,7 @@
 		htmlnode.innerHTML = `
 		<div class="" style="">
 			<h3>Quick tools</h3>
-			<div class="tool_row" style="display: flex; flex-direction: row; width: 100%;">
+			<div class="tool-container" style="">
 				<div id="extend_account"></div>
 				<div id="search_BL"></div>
 				<div id="search_user"></div>
@@ -124,6 +134,49 @@
 			}
 		}
 	}
+	function addtabledata(type, searchData){
+		if (typeof(searchTable)!= "undefined") searchTable.remove();
+		searchTable = document.createElement('table');
+		searchTable.attr({'id':'searchTable', 'class':"table"});
+		searchHead = document.createElement('thead');
+		searchBody = document.createElement('tbody');
+		searchTable.append(searchHead, searchBody);
+		htmlnode.append(searchTable);
+		switch (type) {
+			case 'BusinessLocation.list':
+				//add table head data
+				searchHead.innerHTML = `<tr class="row">
+					<th class="text-left">Business</th>
+					<th class="text-left">Name</th>
+					<th class="text-left">Active</th>
+					<th class="text-left">Address</th>
+					<th class="text-left">City</th>
+					<th class="text-left">Country</th>
+					<th class="text-left">Production</th>
+					<th class="text-left">License status</th>
+					<th class="text-left">License expiration</th>
+				</tr>`;
+				searchData.forEach(result => {
+					searchBody.innerHTML += `<tr class="row">
+						<td class="text-left">${result.businessName} (${result.businessId})</td>
+						<td class="text-left">${result.name}</td>
+						<td class="text-left">${result.businessActive}</td>
+						<td class="text-left">${result.address}</td>
+						<td class="text-left">${result.city}</td>
+						<td class="text-left">${result.countdy}</td>
+						<td class="text-left">${result.blStatus} (since ${result.moveToProdDate})</td>
+						<td class="text-left">${result.licenseStatus}</td>
+						<td class="text-left">${result.licenseExpirationDate}</td>
+						</tr>`;
+				});
+				break;
+			case 'Staff.backofficeUsers':
+				//add table body data
+				break;
+			default:
+				break;
+		}
+	}
 	
 	// main function to add lines to the UI
 	function addfunc(title){
@@ -159,93 +212,44 @@
 					} catch (error) {
 						console.log(error);
 					}
-				}).html('submit account extend');
+				}).html('Submit account extend');
 				
 			break;
 			case 'search_BL':
 				addparagraph('#search_BL', `<h4>Search location</h4>Fill in specific location id OR search by name`);
-				//set input fields for function 
+				//set input fields for UI 
 				fields = {
-					"blID":{
-						"element":"input",
-						"attributes":{
-							"placeholder":current_BL,
-							"id":"s_blID"
-						},
-						"label":{
-							"for":"s_blID",
-							"html":"Business location search"
-						}
-					},
-					"blName":{
-						"element":"input",
-						"attributes":{
-							"placeholder":"Enter name",
-							"id":"s_blName"
-						},
-						"label":{
-							"for":"s_blName",
-							"html":"Business location search"
-						}
-					},
-					"button":{
-						"element":"button",
-						"attributes":{
-							"id": "submit_bl_search",
-							"class":"btn"
-						}
-					}
+					"blID":{"element":"input","attributes":{"placeholder":current_BL,"id":"s_blID"},"label":{"for":"s_blID","html":"Business location search"}},"button":{"element":"button","attributes":{"id": "submit_bl_search","class":"btn"}}
 				}
 				// parse above fields into UI
 				search_blid = document.createElement('form');
 				addinputfields(fields, search_blid);
 				document.getElementById(title).append(search_blid);
-				$('#submit_bl_search').click(()=>{
+				$('#submit_bl_search').click((e)=>{
+					e.preventDefault();
 					try {
-						search()
+						search({
+							'prop': 'id',
+							'viewName': 'BusinessLocation.list',
+							'sValue': s_blID.value
+						});
 					} catch (error) {
 						console.log(error);
 					}
-				}).html('submit account extend');
+				}).html('Search business location');
 			break;
 			case 'search_user':
 				addparagraph('#search_user', `<h4>Search BO user</h4>Fill in specific location id OR search by name`);
+				//set input fields for UI
 				fields = {
-					"usermail":{
-						"element":"input",
-						"attributes":{
-							"placeholder":$('#primary-nav li.business p')[0].innerHTML,
-							"id":"s_usermail"
-						},
-						"label":{
-							"for":"s_usermail",
-							"html":"Search user by email"
-						}
-					},
-					"username":{
-						"element":"input",
-						"attributes":{
-							"placeholder":"Enter name",
-							"id":"s_username"
-						},
-						"label":{
-							"for":"s_username",
-							"html":"Search user by name (first or last)"
-						}
-					},
-					"button":{
-						"element":"button",
-						"attributes":{
-							"id": "submit_user_search",
-							"class":"btn"
-						}
-					}
+					"usermail":{"element":"input","attributes":{"placeholder":$('#primary-nav li.business p')[0].innerHTML,"id":"s_usermail"},"label":{"for":"s_usermail","html":"Search user by email"}},"username":{"element":"input","attributes":{"placeholder":"Enter name","id":"s_username"},"label":{"for":"s_username","html":"Search user by name (first or last)"}},"button":{"element":"button","attributes":{"id": "submit_user_search","class":"btn"}}
 				}
 				// parse above fields into UI
 				search_user = document.createElement('form');
 				addinputfields(fields, search_user);
 				document.getElementById(title).append(search_user);
-				$('#submit_user_search').click(()=>{
+				$('#submit_user_search').click( async(e)=>{
+					e.preventDefault();
 					try {
 						search({
 							'prop': 'emailAddress',
@@ -297,4 +301,4 @@
 			break;
 		}
 	}
-})();
+//})();
