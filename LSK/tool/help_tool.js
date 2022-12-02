@@ -137,7 +137,7 @@
 	function addtabledata(type, searchData){
 		if (typeof(searchTable)!= "undefined") searchTable.remove();
 		searchTable = document.createElement('table');
-		searchTable.attr({'id':'searchTable', 'class':"table"});
+		$(searchTable).attr({'id':'searchTable', 'class':"table"});
 		searchHead = document.createElement('thead');
 		searchBody = document.createElement('tbody');
 		searchTable.append(searchHead, searchBody);

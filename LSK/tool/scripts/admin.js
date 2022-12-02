@@ -21,30 +21,8 @@ function extend_account(BLid, day, month, year){
 	.catch(e=> /**/console.log('error extending:', e))
 }
 function search(data){
-	// switch based on subject to pass into query
-	/**
-	 * data: {
-	 * 		'prop':'',
-	 * 		'viewName':'',	
-	 * 		'sValue':''
-	 * }
-	 */
-	//switch (subject) {
-	//	case 'location':
-	//		viewName = 'BusinessLocation.list';
-	//		prop = 'id';
-	//		sValue = value;
-	//		break;
-	//	case 'user':
-	//		viewName = 'Staff.backofficeUsers';
-	//		prop = 'emailAddress';
-	//		sValue = value;
-	//		break;
-	//	default:
-	//		break;
-	//}
 	// fetch the data
-	fetch("https://manager.trial.lsk.lightspeed.app/criteria/datatables", {
+	fetch(location.origin+"/criteria/datatables", {
 		"headers": {
 			"accept": "application/json, text/javascript, */*; q=0.01",
 			"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -56,9 +34,12 @@ function search(data){
 		"mode": "cors",
 		"credentials": "include"
 	}).then(res=>{
-		res.json().then(json =>console.log(json.aaData[0]))
+		res.json().then(json=>{
+			console.log(json.aaData);
+			addtabledata(data.viewName, json.aaData);
+		})
 	})
-} /** 
+/** 
 search({
 	'prop': 'emailAddress',
 	'viewName': 'Staff.backofficeUsers',
@@ -70,3 +51,21 @@ search({
 	'sValue': '25769803788'
 })
 */
+}
+function userdata(){
+	fetch(location.origin+"/criteria/ajax", {
+		"headers": {
+			"accept": "application/json, text/javascript, */*; q=0.01",
+			"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+			"x-requested-with": "XMLHttpRequest"
+		},
+		"body": `_filter_staffId=%3D%3D${staff_id}&view=Staff.backofficeUserBusinessLocations&max=1000&offset=0&maxRows=20000&viewFormat=jQueryTable&blScoped=true`,
+		"method": "POST",
+		"mode": "cors",
+		"credentials": "include"
+	}).then(res=>{
+		res.json().then(json=>{
+			console.log(json.rows);
+		})
+	})
+}
