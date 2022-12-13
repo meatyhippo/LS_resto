@@ -21,23 +21,40 @@ function extend_account(BLid, day, month, year){
 	.catch(e=> /**/console.log('error extending:', e))
 }
 function search(data){
-	// fetch the data
-	fetch(location.origin+"/criteria/datatables", {
-		"headers": {
-			"accept": "application/json, text/javascript, */*; q=0.01",
-			"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-			"x-requested-with": "XMLHttpRequest"
-		},
-		"referrer": "https://manager.trial.lsk.lightspeed.app/admin/locations",
-		"body": `sEcho=1&iColumns=4&sColumns=4&mDataProp_0=${data.prop}&sSearch=&bRegex=false&sSearch_0=${data.sValue}&bRegex_0=false&bSearchable_0=true&viewName=${data.viewName}&viewFormat=jQueryTable&blScoped=true&_arg_businessId=`,
-		"method": "POST",
-		"mode": "cors",
-		"credentials": "include"
-	}).then(res=>{
-		res.json().then(json=>{
-			console.log(json.aaData);
-			addtabledata(data.viewName, json.aaData);
-		})
+	let fetchlist = [];
+	let aData = {};
+	data.forEach(s => {
+		// fetch the data
+		let x = fetch(location.origin+"/criteria/datatables", {
+			"headers": {
+				"accept": "application/json, text/javascript, */*; q=0.01",
+				"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+				"x-requested-with": "XMLHttpRequest"
+			},
+			"referrer": "https://manager.trial.lsk.lightspeed.app/admin/locations",
+			"body": `sEcho=1&iColumns=4&sColumns=4&iDisplayLength=25&mDataProp_0=${s.prop}&sSearch=&bRegex=false&sSearch_0=${s.sValue}&bRegex_0=false&bSearchable_0=true&viewName=${s.viewName}&viewFormat=jQueryTable&blScoped=true&_arg_businessId=`,
+			"method": "POST",
+			"mode": "cors",
+			"credentials": "include"
+		});
+		fetchlist.push(x);
+	});
+	Promise.all(fetchlist).then(res=>{
+		let jsonlist = [];
+		res.forEach(r=>{
+			let j = r.json();
+			jsonlist.push(j);
+		});
+		Promise.all(jsonlist).then(jsons=>{
+			jsons.forEach(json=>{
+				console.log(json.aaData);
+				json.aaData.forEach(d=>{
+					aData[d.id] = d;
+				});
+			});
+			console.log('totaldata results:', Object.keys(aData).length, aData);
+			addtabledata(data[0].viewName, aData);
+		});
 	})
 /** 
 search({

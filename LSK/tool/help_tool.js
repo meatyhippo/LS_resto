@@ -68,6 +68,8 @@
 			</div>
 		</div>`;
 		$('#content').prepend(htmlnode);
+		searchTable = document.createElement('table');
+		$(searchTable).attr({'id':'searchTable', 'class':"table"});
 	}
 	// UI for account BO
 	function paint_account_box(){
@@ -89,7 +91,7 @@
 		}).then((fullfilled)=>{
 			/**/console.log("admin UI added");
 			//get admin functions
-			$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('Admin functions loaded:', '\n', data)})
+			//$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('Admin functions loaded:', '\n', data)})
 			// UI functions to add if on admin page
 			addfunc('extend_account'); //add extend account function
 			addfunc('search_BL'); //add search location function
@@ -135,43 +137,64 @@
 		}
 	}
 	function addtabledata(type, searchData){
-		if (typeof(searchTable)!= "undefined") searchTable.remove();
-		searchTable = document.createElement('table');
-		$(searchTable).attr({'id':'searchTable', 'class':"table"});
-		searchHead = document.createElement('thead');
-		searchBody = document.createElement('tbody');
-		searchTable.append(searchHead, searchBody);
+		console.log('adding to table', type, searchData);
+		if (typeof(searchHead)=='undefined') searchHead = document.createElement('thead'),searchTable.append(searchHead);
+		searchBody = document.createElement('tbody'), searchTable.append(searchBody);
 		htmlnode.append(searchTable);
 		switch (type) {
+			//business locations
 			case 'BusinessLocation.list':
 				//add table head data
-				searchHead.innerHTML = `<tr class="row">
-					<th class="text-left">Business</th>
-					<th class="text-left">Name</th>
-					<th class="text-left">Active</th>
-					<th class="text-left">Address</th>
-					<th class="text-left">City</th>
-					<th class="text-left">Country</th>
-					<th class="text-left">Production</th>
-					<th class="text-left">License status</th>
-					<th class="text-left">License expiration</th>
-				</tr>`;
-				searchData.forEach(result => {
+					searchHead.innerHTML = `<tr class="row">
+						<th class="text-left">Business</th>
+						<th class="text-left">Name</th>
+						<th class="text-left">Address</th>
+						<th class="text-left">City</th>
+						<th class="text-left">Country</th>
+						<th class="text-left">Production</th>
+						<th class="text-left">License status</th>
+						<th class="text-left">License expiration</th>
+					</tr>`;
+				//add table body data
+				Object.keys(searchData).forEach(r=>{
+					r = searchData[r];
 					searchBody.innerHTML += `<tr class="row">
-						<td class="text-left">${result.businessName} (${result.businessId})</td>
-						<td class="text-left">${result.name}</td>
-						<td class="text-left">${result.businessActive}</td>
-						<td class="text-left">${result.address}</td>
-						<td class="text-left">${result.city}</td>
-						<td class="text-left">${result.countdy}</td>
-						<td class="text-left">${result.blStatus} (since ${result.moveToProdDate})</td>
-						<td class="text-left">${result.licenseStatus}</td>
-						<td class="text-left">${result.licenseExpirationDate}</td>
+						<td class="text-left">${r.businessName} (${r.businessId})</td>
+						<td class="text-left">${r.name}</td>
+						<td class="text-left">${r.address}</td>
+						<td class="text-left">${r.city}</td>
+						<td class="text-left">${r.countdy}</td>
+						<td class="text-left">${r.blStatus} (since ${r.moveToProdDate})</td>
+						<td class="text-left">${r.licenseStatus}</td>
+						<td class="text-left">${r.licenseExpirationDate}</td>
 						</tr>`;
 				});
 				break;
+			//users
 			case 'Staff.backofficeUsers':
+				//add table head data
+				searchHead.innerHTML = `<tr class="row">
+					<th class="text-left">Businesses</th>
+					<th class="text-left">First Name</th>
+					<th class="text-left">Last Name</th>
+					<th class="text-left">Email</th>
+					<th class="text-left">Active</th>
+					<th class="text-left">Id</th>
+					<th class="text-left">Add BL</th>
+				</tr>`;
 				//add table body data
+				Object.keys(searchData).forEach(r=>{
+					r = searchData[r];
+					searchBody.innerHTML += `<tr class="row">
+						<td class="text-left">+</td>
+						<td class="text-left">${r.firstName}</td>
+						<td class="text-left">${r.lastName}</td>
+						<td class="text-left">${r.emailAddress}</td>
+						<td class="text-left">${r.active}</td>
+						<td class="text-left">${r.id}</td>
+						<td class="text-left"><a class=\"btn btn-primary add-bl\" href=${location.origin+'/admin/boUsers#addBizLoc'} data-staff=\"${r.id}\" data-email=\"${r.emailAddress}\"><i class=\"icon-plus\"></i> Add BL</a></td>
+						</tr>`;
+				});
 				break;
 			default:
 				break;
@@ -219,7 +242,7 @@
 				addparagraph('#search_BL', `<h4>Search location</h4>Fill in specific location id OR search by name`);
 				//set input fields for UI 
 				fields = {
-					"blID":{"element":"input","attributes":{"placeholder":current_BL,"id":"s_blID"},"label":{"for":"s_blID","html":"Business location search"}},"button":{"element":"button","attributes":{"id": "submit_bl_search","class":"btn"}}
+					"blID":{"element":"input","attributes":{"placeholder":"Id or Name","id":"s_blID"},"label":{"for":"s_blID","html":"Business location search"}},"button":{"element":"button","attributes":{"id": "submit_bl_search","class":"btn"}}
 				}
 				// parse above fields into UI
 				search_blid = document.createElement('form');
@@ -228,11 +251,17 @@
 				$('#submit_bl_search').click((e)=>{
 					e.preventDefault();
 					try {
-						search({
+						if (typeof(searchBody) != "undefined") console.log('removing', searchBody), searchBody.remove();
+						search([{
 							'prop': 'id',
 							'viewName': 'BusinessLocation.list',
 							'sValue': s_blID.value
-						});
+						},{
+							'prop': 'name',
+							'viewName': 'BusinessLocation.list',
+							'sValue': s_blID.value
+						}]);
+						//search()
 					} catch (error) {
 						console.log(error);
 					}
@@ -242,7 +271,7 @@
 				addparagraph('#search_user', `<h4>Search BO user</h4>Fill in specific location id OR search by name`);
 				//set input fields for UI
 				fields = {
-					"usermail":{"element":"input","attributes":{"placeholder":$('#primary-nav li.business p')[0].innerHTML,"id":"s_usermail"},"label":{"for":"s_usermail","html":"Search user by email"}},"username":{"element":"input","attributes":{"placeholder":"Enter name","id":"s_username"},"label":{"for":"s_username","html":"Search user by name (first or last)"}},"button":{"element":"button","attributes":{"id": "submit_user_search","class":"btn"}}
+					"usermail":{"element":"input","attributes":{"placeholder":$('#primary-nav li.business p')[0].innerHTML,"id":"s_usermail"},"label":{"for":"s_usermail","html":"Search user by email"}},"button":{"element":"button","attributes":{"id": "submit_user_search","class":"btn"}}
 				}
 				// parse above fields into UI
 				search_user = document.createElement('form');
@@ -251,11 +280,22 @@
 				$('#submit_user_search').click( async(e)=>{
 					e.preventDefault();
 					try {
-						search({
+						if (typeof(searchBody) != "undefined") console.log('removing', searchBody), searchBody.remove();
+						search([{
 							'prop': 'emailAddress',
 							'viewName': 'Staff.backofficeUsers',
 							'sValue': s_usermail.value
-						});
+						},{
+							'prop': 'firstName',
+							'viewName': 'Staff.backofficeUsers',
+							'sValue': s_usermail.value
+						},{
+							'prop': 'lastName',
+							'viewName': 'Staff.backofficeUsers',
+							'sValue': s_usermail.value
+						}]);
+						//search();
+						//search();
 					} catch (error) {
 						console.log(error);
 					}
