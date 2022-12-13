@@ -91,7 +91,7 @@
 		}).then((fullfilled)=>{
 			/**/console.log("admin UI added");
 			//get admin functions
-			//$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('Admin functions loaded:', '\n', data)})
+			$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('Admin functions loaded:', '\n', data)})
 			// UI functions to add if on admin page
 			addfunc('extend_account'); //add extend account function
 			addfunc('search_BL'); //add search location function
