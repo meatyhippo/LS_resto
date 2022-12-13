@@ -56,19 +56,19 @@ function search(data){
 			addtabledata(data[0].viewName, aData);
 		});
 	})
+}
 /** 
-search({
+search([{
 	'prop': 'emailAddress',
 	'viewName': 'Staff.backofficeUsers',
 	'sValue':'cassia@ikentoo.com'
-})
-search({
+}])
+search([{
 	'prop': 'id',
 	'viewName': 'BusinessLocation.list',
 	'sValue': '25769803788'
-})
+}])
 */
-}
 function userdata(){
 	fetch(location.origin+"/criteria/ajax", {
 		"headers": {
