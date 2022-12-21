@@ -69,20 +69,37 @@ search([{
 	'sValue': '25769803788'
 }])
 */
-function userdata(){
-	fetch(location.origin+"/criteria/ajax", {
-		"headers": {
-			"accept": "application/json, text/javascript, */*; q=0.01",
-			"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-			"x-requested-with": "XMLHttpRequest"
-		},
-		"body": `_filter_staffId=%3D%3D${staff_id}&view=Staff.backofficeUserBusinessLocations&max=1000&offset=0&maxRows=20000&viewFormat=jQueryTable&blScoped=true`,
-		"method": "POST",
-		"mode": "cors",
-		"credentials": "include"
-	}).then(res=>{
-		res.json().then(json=>{
-			console.log(json.rows);
-		})
-	})
+async function userdata(staff_id, email){
+	if (staff_id != null){
+		let res = await fetch(location.origin+"/criteria/ajax", {
+			"headers": {
+				"accept": "application/json, text/javascript, */*; q=0.01",
+				"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+				"x-requested-with": "XMLHttpRequest"
+			},
+			"body": `_filter_staffId=%3D%3D${staff_id}&view=Staff.backofficeUserBusinessLocations&max=1000&offset=0&maxRows=20000&viewFormat=jQueryTable&blScoped=true`,
+			"method": "POST",
+			"mode": "cors",
+			"credentials": "include"
+		});
+		let json = await res.json();
+		console.log(json.rows);
+		return await json.rows;
+	} else {
+		let res = await fetch(location.origin+"/criteria/datatables", {
+			"headers": {
+				"accept": "application/json, text/javascript, */*; q=0.01",
+				"content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+				"x-requested-with": "XMLHttpRequest"
+			},
+			"referrer": "https://manager.trial.lsk.lightspeed.app/admin/locations",
+			"body": `sEcho=1&iColumns=4&sColumns=4&iDisplayLength=25&mDataProp_0=emailAddress&sSearch=&bRegex=false&sSearch_0=${email}&bRegex_0=false&bSearchable_0=true&viewName=Staff.backofficeUsers&viewFormat=jQueryTable&blScoped=true&_arg_businessId=`,
+			"method": "POST",
+			"mode": "cors",
+			"credentials": "include"
+		});
+		let json = await res.json();
+		console.log(email, json);
+		return await userdata(json.aaData[0].id,null);
+	}
 }

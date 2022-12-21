@@ -6,10 +6,11 @@
 	//global variables
 	let current_BL = "";
 	location.pathname.includes('/businessLocationDetails')?current_BL = location.search.match(/\d+/gm)[0] : current_BL = "000000000000000";
+	current_user = $('#primary-nav li.business p')[0].innerHTML;
 	$('.container-fluid')[0].removeAttribute('style');
 
 	//add css to page
-	function addcss(){
+	(()=>{
 		stylenode = document.createElement('style'),
 		stylenode.innerHTML = `
 		/* css for account BO */
@@ -50,11 +51,13 @@
 			border: 1px solid lightgrey;
 			border-radius: 5px;
 		}
+		.muted * {
+			color: #999999!important;
+		}
 		`;
 		document.body.append(stylenode);
-	}addcss();
-
-	// UI for admin BO
+	})();
+	//UI for admin BO
 	function paint_admin_box(){
 		htmlnode = document.createElement('div');
 		htmlnode.id = "ui-box"
@@ -62,6 +65,7 @@
 		<div class="" style="">
 			<h3>Quick tools</h3>
 			<div class="tool-container" style="">
+				<div id="your_account"></div>
 				<div id="extend_account"></div>
 				<div id="search_BL"></div>
 				<div id="search_user"></div>
@@ -71,7 +75,7 @@
 		searchTable = document.createElement('table');
 		$(searchTable).attr({'id':'searchTable', 'class':"table"});
 	}
-	// UI for account BO
+	//UI for account BO
 	function paint_account_box(){
 		htmlnode = document.createElement('div');
 		htmlnode.id = "ui-box"
@@ -82,7 +86,6 @@
 		</div>`;
 		$('.flame-header').append(htmlnode);
 	}
-	
 	//filter between admin and in an actual account
 	if (location.pathname.includes('/admin')){
 		//promise to only add functions after UI is created
@@ -91,13 +94,13 @@
 		}).then((fullfilled)=>{
 			/**/console.log("admin UI added");
 			//get admin functions
-			$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('Admin functions loaded:', '\n', data)})
+			//$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('Admin functions loaded:', '\n', data)})
 			// UI functions to add if on admin page
+			addfunc('your_account');
 			addfunc('extend_account'); //add extend account function
 			addfunc('search_BL'); //add search location function
 			addfunc('search_user'); //add search user function
 		}).catch((e)=>{/**/console.log(e);});
-		
 	} else {
 		//promise to only add functions after UI is created
 		let createbox = new Promise((resolve, reject)=>{
@@ -114,11 +117,11 @@
 			addfunc('deliverect'); //add deliverect function
 		}).catch((e)=>{/**/console.log(e);});
 	}
-
 	//functions to add title and content
 	function addparagraph(location, text){
 		$(location).append(`<p>${text}</p>`);
 	}
+	//add input fields based on function
 	function addinputfields(fields, location){
 		for (const key in fields) {
 			if (Object.hasOwnProperty.call(fields, key)) {
@@ -136,6 +139,7 @@
 			}
 		}
 	}
+	//add data to the UI table after search
 	function addtabledata(type, searchData){
 		console.log('adding to table', type, searchData);
 		if (typeof(searchHead)=='undefined') searchHead = document.createElement('thead'),searchTable.append(searchHead);
@@ -158,8 +162,8 @@
 				//add table body data
 				Object.keys(searchData).forEach(r=>{
 					r = searchData[r];
-					searchBody.innerHTML += `<tr class="row">
-						<td class="text-left">${r.businessName} (${r.businessId})</td>
+					searchBody.innerHTML += `<tr class="row ${!r.licenseStatus.includes('ACTIVE')?"muted":""}">
+						<td class="text-left"><a href="/admin/index?bizId=${r.businessId}&what=loginAs">${r.businessName} (${r.businessId})</a></td>
 						<td class="text-left">${r.name}</td>
 						<td class="text-left">${r.address}</td>
 						<td class="text-left">${r.city}</td>
@@ -200,10 +204,35 @@
 				break;
 		}
 	}
-	
-	// main function to add lines to the UI
-	function addfunc(title){
+	//main function to add lines to the UI
+	async function addfunc(title){
 		switch (title) {
+			case 'your_account':
+				// add accounts the current user is connected to
+				addparagraph('#your_account', `<h4>Your account</h4>These are the accounts you are connected to:`)
+				let accounts = await userdata(null, current_user.split('@')[0]);
+				console.log('function ran', accounts);
+				accountsTable = document.createElement('table');
+				$(accountsTable).attr({'id':'accountsTable', 'class':"table"});
+				accountsHead = document.createElement('thead'),accountsTable.append(accountsHead);
+				accountsBody = document.createElement('tbody'), accountsTable.append(accountsBody);
+				accountsHead.innerHTML = `<tr class="row">
+				<th class="text-left">Business ID</th>
+				<th class="text-left">Business Name</th>
+				<th class="text-left">Business Location ID</th>
+				<th class="text-left">Business Location</th>
+				</tr>`;
+				accounts.forEach(t => {
+					accountsBody.innerHTML += `
+					<tr class="row">
+						<td class="text-left">${t.bl_businessId}</td>
+						<td class="text-left">${t.bl_businessName}</td>
+						<td class="text-left">${t.bl_id}</td>
+						<td class="text-left">${t.bl_name}</td>
+					</tr>`
+				});
+				document.getElementById(title).append(accountsTable);
+				break;
 			case 'extend_account':
 				addparagraph('#extend_account', `<h4>Extend account</h4>Fill in specific date or leave empty for extend until 2030`);
 				//set input fields to extend account if date left empty, auto extend until 2030.
@@ -236,7 +265,6 @@
 						console.log(error);
 					}
 				}).html('Submit account extend');
-				
 			break;
 			case 'search_BL':
 				addparagraph('#search_BL', `<h4>Search location</h4>Fill in specific location id OR search by name`);
@@ -271,7 +299,7 @@
 				addparagraph('#search_user', `<h4>Search BO user</h4>Fill in specific location id OR search by name`);
 				//set input fields for UI
 				fields = {
-					"usermail":{"element":"input","attributes":{"placeholder":$('#primary-nav li.business p')[0].innerHTML,"id":"s_usermail"},"label":{"for":"s_usermail","html":"Search user by email"}},"button":{"element":"button","attributes":{"id": "submit_user_search","class":"btn"}}
+					"usermail":{"element":"input","attributes":{"placeholder":current_user,"id":"s_usermail"},"label":{"for":"s_usermail","html":"Search user by email"}},"button":{"element":"button","attributes":{"id": "submit_user_search","class":"btn"}}
 				}
 				// parse above fields into UI
 				search_user = document.createElement('form');
