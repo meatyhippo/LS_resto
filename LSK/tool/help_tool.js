@@ -94,7 +94,10 @@
 		}).then((fullfilled)=>{
 			/**/console.log("admin UI added");
 			//get admin functions
-			$.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{/**/console.log('Admin functions loaded:', '\n', data)})
+			//admin = fetch("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js");
+			f = $.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{
+				//console.log('Admin functions loaded:', '\n', data)
+			})
 			// UI functions to add if on admin page
 			addfunc('your_account');
 			addfunc('extend_account'); //add extend account function
@@ -209,7 +212,9 @@
 		switch (title) {
 			case 'your_account':
 				// add accounts the current user is connected to
-				addparagraph('#your_account', `<h4>Your account</h4>These are the accounts you are connected to:`)
+				let r = await f;
+				console.log('r',r);
+				addparagraph('#your_account', `<h4>Your account</h4>These are the accounts you are connected to:`);
 				let accounts = await userdata(null, current_user.split('@')[0]);
 				console.log('function ran', accounts);
 				accountsTable = document.createElement('table');
@@ -231,7 +236,7 @@
 						<td class="text-left">${t.bl_name}</td>
 					</tr>`
 				});
-				document.getElementById(title).append(accountsTable);
+				document.getElementById(title).append(accountsTable)
 				break;
 			case 'extend_account':
 				addparagraph('#extend_account', `<h4>Extend account</h4>Fill in specific date or leave empty for extend until 2030`);
