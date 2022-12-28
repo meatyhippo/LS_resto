@@ -66,9 +66,9 @@
 			<h3>Quick tools</h3>
 			<div class="tool-container" style="">
 				<div id="your_account"></div>
-				<div id="extend_account"></div>
 				<div id="search_BL"></div>
 				<div id="search_user"></div>
+				<div id="extend_account"></div>
 			</div>
 		</div>`;
 		$('#content').prepend(htmlnode);
