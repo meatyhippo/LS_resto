@@ -83,7 +83,6 @@ async function userdata(staff_id, email){
 			"credentials": "include"
 		});
 		let json = await res.json();
-		console.log(json.rows);
 		return await json.rows;
 	} else {
 		let res = await fetch(location.origin+"/criteria/datatables", {
@@ -99,7 +98,6 @@ async function userdata(staff_id, email){
 			"credentials": "include"
 		});
 		let json = await res.json();
-		console.log(email, json);
 		return await userdata(json.aaData[0].id,null);
 	}
 }
