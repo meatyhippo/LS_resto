@@ -37,7 +37,7 @@
 			display: flex;
 			flex-direction: row;
 			width: 100%;
-			justify-content: space-evenly;
+			justify-content: space-between;
 		}
 		#ui-box label, #ui-box input, #ui-box label:focus, #ui-box input:focus {
 			width: 45%;
@@ -95,14 +95,12 @@
 			/**/console.log("admin UI added");
 			//get admin functions
 			//admin = fetch("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js");
-			f = $.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{
-				//console.log('Admin functions loaded:', '\n', data)
-			})
+			f = $.get("https://meatyhippo.github.io/LS_resto/LSK/tool/scripts/admin.js",(data)=>{('admin functions loaded:')})
 			// UI functions to add if on admin page
 			addfunc('your_account');
-			addfunc('extend_account'); //add extend account function
 			addfunc('search_BL'); //add search location function
 			addfunc('search_user'); //add search user function
+			addfunc('extend_account'); //add extend account function
 		}).catch((e)=>{/**/console.log(e);});
 	} else {
 		//promise to only add functions after UI is created
